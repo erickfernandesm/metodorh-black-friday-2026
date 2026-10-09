@@ -1071,3 +1071,36 @@ body.has-sticky-cta .site-footer { padding-bottom: calc(110px + env(safe-area-in
 .seal-divider + .section { padding-top: calc(var(--section-y) + 110px) !important; }
 @media (max-width: 759px) { .seal-divider + .section { padding-top: calc(var(--section-y) + 80px) !important; } }
 .leva__head strong:not(.leva__inf) { color: var(--text); font-weight: 700; }
+
+/* 50% OFF + "Só hoje" lado a lado, depois de "Exclusiva para alunos" */
+.hero__deal { display: inline-flex; align-items: center; gap: 4px; }
+.hero__deal .tag-off-img { display: block !important; height: 58px; margin-block: -8px; animation: off-glow 2.4s ease-in-out infinite; }
+.hero__deal .tag-today { margin-left: 18px; }
+@media (min-width: 960px) { .hero__deal .tag-off-img { height: 74px; margin-block: -12px; } }
+@media (max-width: 959px) {
+  .hero__deal .tag-off-img { height: 46px; margin-block: -4px; }
+  .hero__deal .tag-today { font-size: 1.15rem; padding: 6px 12px 4px 24px; margin-left: 16px; }
+}
+
+/* 50% OFF em cima e "Só hoje" logo embaixo, alinhados */
+.hero__deal { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+.hero__deal .tag-today { margin-left: 22px; }
+@media (max-width: 959px) { .hero__deal .tag-today { margin-left: 18px; } }
+
+/* Selo "50% OFF só hoje" ao lado de "Exclusiva para alunos" */
+.deal-seal {
+  width: 104px; height: auto; margin-block: -14px;
+  filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .6)) drop-shadow(0 0 18px rgba(247, 147, 30, .45));
+  animation: deal-pop 2.4s ease-in-out infinite;
+}
+@keyframes deal-pop { 0%, 100% { rotate: -6deg; scale: 1; } 50% { rotate: 4deg; scale: 1.06; } }
+@media (min-width: 960px) { .deal-seal { width: 150px; margin-block: -26px; } }
+@media (prefers-reduced-motion: reduce) { .deal-seal { animation: none; } }
+
+/* Celular: selo "50% OFF só hoje" do hero no canto superior direito */
+@media (max-width: 959px) {
+  .hero .hero__inner { position: static; }
+  .hero .deal-seal { position: absolute; z-index: 3; top: 14px; right: 12px; width: min(128px, 33vw); margin: 0; }
+}
+@media (max-width: 959px) { .hero .hero__tags { position: static; } }
+@media (max-width: 959px) { .hero .hero__tags { margin-top: 18px; } }
