@@ -68,7 +68,24 @@
     // Selo e rótulos de Black Friday
     each('[data-offer-badge]', function (el) { el.hidden = !isBF; });
 
-    if (offer.accessMonths) setText('[data-access-months]', String(offer.accessMonths));
+    // Percentual de desconto (ex.: "50% OFF"), calculado a partir dos preços
+    var pctOff = (offer.listPrice > 0 && hasCash && offer.listPrice > offer.cashPrice)
+      ? Math.round((1 - offer.cashPrice / offer.listPrice) * 100) : 0;
+    // O selo 3D "50% OFF" é uma imagem fixa: se o desconto mudar, vira texto.
+    each('[data-discount-img]', function (img) {
+      if (isBF && pctOff === 50) return;
+      if (!isBF || pctOff <= 0) { img.hidden = true; return; }
+      var tag = document.createElement('span');
+      tag.className = 'tag-off';
+      tag.textContent = pctOff + '% OFF';
+      img.replaceWith(tag);
+    });
+    if (isBF && pctOff > 0) {
+      setText('[data-discount]', pctOff + '% OFF');
+      setText('[data-discount-pct]', pctOff + '%');
+    } else {
+      each('[data-discount], [data-discount-pct]', function (el) { el.hidden = true; });
+    }
     if (offer.paymentMethods) setText('[data-payment-methods]', offer.paymentMethods);
 
     // Consultoria individual (condição limitada)
@@ -127,6 +144,8 @@
 
     var pending = [];
     if (!isBF) pending.push('Preço de Black Friday não definido. A página mostra o preço atual do site.');
+    if (isBF && offer.priceConfirmed === false) pending.push('Preço da Black (R$ ' + offer.cashPrice + ') ainda não confirmado.');
+    if (!(offer.installments > 1)) pending.push('Parcelamento da Black não definido. A página mostra só o valor à vista.');
     if (!campaign.endsAt) pending.push('Data de encerramento não definida. A faixa com contador está oculta.');
     if (/N103364259K\?off=2j6xzmn0/.test((C.checkout || {}).url || '')) pending.push('O checkout ainda é o link atual do site, não o da Black Friday.');
     if (!pending.length) return;

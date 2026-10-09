@@ -28,7 +28,12 @@
       if (distance > 0) track.style.setProperty('--tape-duration', Math.round(distance / TAPE_SPEED) + 's');
     });
   }
-  each('[data-tape]', function (track) { track.textContent = track.textContent.repeat(4); });
+  each('[data-tape]', function (track) { track.innerHTML = track.innerHTML.repeat(6); });
+  // Esteira de cursos (celular): duplica as capas para o loop contínuo.
+  // No desktop as cópias ficam ocultas pela grade (CSS).
+  each('[data-covers-track]', function (track) {
+    Array.prototype.slice.call(track.children).forEach(function (img) { track.appendChild(img.cloneNode(true)); });
+  });
   sizeTapes();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeTapes);
 
@@ -45,6 +50,22 @@
       setTimeout(function () { syncing = false; }, 0);
     });
   });
+
+  /* Carrossel de módulos: bolinhas indicando o card atual */
+  var modList = document.querySelector('.modules');
+  var dotsBox = document.querySelector('[data-modules-dots]');
+  if (modList && dotsBox) {
+    var cards = modList.children;
+    for (var i = 0; i < cards.length; i++) dotsBox.appendChild(document.createElement('span'));
+    var dots = dotsBox.children;
+    var markDot = function () {
+      var max = modList.scrollWidth - modList.clientWidth;
+      var idx = max > 0 ? Math.round((modList.scrollLeft / max) * (cards.length - 1)) : 0;
+      for (var j = 0; j < dots.length; j++) dots[j].classList.toggle('is-active', j === idx);
+    };
+    modList.addEventListener('scroll', markDot, { passive: true });
+    markDot();
+  }
 
   /* Entrada das seções */
   var reveals = document.querySelectorAll('.reveal');

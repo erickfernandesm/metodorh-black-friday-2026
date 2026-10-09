@@ -33,17 +33,25 @@ window.RH_CONFIG = {
      "condição de Black Friday" nem exibe economia.
      ---------------------------------------------------------------------- */
   offer: {
-    isBlackFridayPrice: false,     // [PENDENTE] true somente com o preço de BF definido
+    isBlackFridayPrice: true,      // exibe selo Black Friday, "% OFF" e economia
 
-    listPrice: 2997,               // [CONFIRMADO] preço "De". Use null para não exibir.
-    cashPrice: 1997,               // [CONFIRMADO] valor à vista
-    installments: 12,              // [CONFIRMADO] número de parcelas
-    installmentValue: 212.66,      // [CONFIRMADO] valor de cada parcela
+    // [PENDENTE] Valores da Black informados como provisórios ("vai ser 997 eu acho").
+    // Mude priceConfirmed para true quando o preço estiver fechado
+    // (enquanto for false, o aviso de prévia lembra de confirmar).
+    priceConfirmed: false,
+    listPrice: 1997,               // preço "De" (preço atual do site à vista)
+    cashPrice: 997,                // preço da Black à vista
+    // O "% OFF" é calculado sozinho a partir de listPrice e cashPrice (hoje: 50%).
+
+    // [PENDENTE] Parcelamento da Black. Enquanto ficar null, a página mostra só o
+    // valor à vista. Ex.: installments: 12, installmentValue: 103.29
+    installments: null,
+    installmentValue: null,
     installmentNote: '',           // ex.: 'sem juros' (preencha só se for verdade)
 
     showSavings: true,             // mostra "economia" (só quando isBlackFridayPrice = true)
 
-    accessMonths: 12,              // [CONFIRMADO] meses de acesso
+    // Acesso: vitalício à plataforma completa (textos direto no index.html).
     paymentMethods: 'Cartão de crédito, Pix e PayPal', // [CONFIRMADO] conforme FAQ do site
 
     // [CONFIRMADO no site atual] Condição limitada da turma.
