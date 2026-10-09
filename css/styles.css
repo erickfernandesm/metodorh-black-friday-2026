@@ -1070,3 +1070,4 @@ body.has-sticky-cta .site-footer { padding-bottom: calc(110px + env(safe-area-in
 #identificacao { padding-bottom: calc(var(--section-y) + 30px); }
 .seal-divider + .section { padding-top: calc(var(--section-y) + 110px) !important; }
 @media (max-width: 759px) { .seal-divider + .section { padding-top: calc(var(--section-y) + 80px) !important; } }
+.leva__head strong:not(.leva__inf) { color: var(--text); font-weight: 700; }
