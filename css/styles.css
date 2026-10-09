@@ -1104,3 +1104,28 @@ body.has-sticky-cta .site-footer { padding-bottom: calc(110px + env(safe-area-in
 }
 @media (max-width: 959px) { .hero .hero__tags { position: static; } }
 @media (max-width: 959px) { .hero .hero__tags { margin-top: 18px; } }
+
+/* Passo 2: selo "Pagamento seguro via Hotmart" */
+.step__secure { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line-strong); font-size: .8rem; color: var(--faint); }
+.step__secure img { width: 104px; height: auto; }
+
+/* Todas as ferramentas (grade com as capas) */
+.all-tools__lead { color: var(--muted); margin: -10px 0 20px; }
+.all-tools { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.all-tools img { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); transition: transform .3s var(--ease), border-color .3s; }
+@media (hover: hover) { .all-tools img:hover { transform: translateY(-4px) scale(1.03); border-color: var(--bf); } }
+@media (min-width: 640px) { .all-tools { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; } }
+@media (min-width: 1040px) { .all-tools { grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 12px; } .all-tools img { border-radius: 10px; } }
+#modulos { padding-bottom: var(--section-y); }
+
+/* Capa tipográfica (Empreendedorismo) dentro da grade de ferramentas */
+.tool-type {
+  aspect-ratio: 2 / 3; border-radius: 8px; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 3px; padding: 10px 8px;
+  background: radial-gradient(circle at 70% 25%, rgba(247, 147, 30, .6), transparent 55%), linear-gradient(180deg, #2a1a08, #060606);
+  border: 1px solid var(--green-line);
+}
+.tool-type svg { font-size: 1.4rem; color: var(--bf); margin-bottom: auto; }
+.tool-type span { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(.7rem, 2.6vw, 1.05rem); line-height: 1.05; overflow-wrap: anywhere; }
+.tool-type small { font-size: clamp(.45rem, 1.6vw, .62rem); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--bf); line-height: 1.25; }
+@media (min-width: 1040px) { .tool-type { border-radius: 10px; } .tool-type span { font-size: 1rem; } .tool-type small { font-size: .6rem; } }
