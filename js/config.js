@@ -86,7 +86,7 @@ window.RH_CONFIG = {
      CONTATO E LINKS INSTITUCIONAIS [CONFIRMADO]
      ---------------------------------------------------------------------- */
   contact: {
-    privacyUrl: 'https://curso.soluterh.com.br/politicas-de-privacidade/',
+    privacyUrl: 'https://soluterh.com.br/politica-de-privacidade.html',
     emecUrl: 'https://emec.mec.gov.br/emec/consulta-cadastro/detalhamento/d96957f455f6405d14c6542552b0f6eb/MjI2NjA=',
   },
 
