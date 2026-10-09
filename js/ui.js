@@ -1,0 +1,102 @@
+/* ==========================================================================
+   Interações da interface
+   - Mural de cursos e faixas Black Friday em loop contínuo
+   - Entrada suave das seções
+   - CTA fixo: aparece ao chegar nos módulos e some sobre a oferta e o final
+   - Ano do rodapé
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  var hasIO = 'IntersectionObserver' in window;
+  function each(sel, fn) { Array.prototype.forEach.call(document.querySelectorAll(sel), fn); }
+
+  /* Loop contínuo: duplica o conteúdo para a animação andar 50% sem "pulo" */
+  each('.wall__track', function (track) {
+    Array.prototype.slice.call(track.children).forEach(function (img) {
+      var clone = img.cloneNode(true);
+      clone.removeAttribute('fetchpriority');
+      clone.loading = 'lazy';
+      track.appendChild(clone);
+    });
+  });
+  // Faixas: velocidade constante em px/s, independente do tamanho da tela
+  var TAPE_SPEED = 45;
+  function sizeTapes() {
+    each('[data-tape]', function (track) {
+      var distance = track.scrollWidth / 2; // a animação anda 50% da faixa
+      if (distance > 0) track.style.setProperty('--tape-duration', Math.round(distance / TAPE_SPEED) + 's');
+    });
+  }
+  each('[data-tape]', function (track) { track.textContent = track.textContent.repeat(4); });
+  sizeTapes();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeTapes);
+
+  /* Módulos: "Ver conteúdo" abre/fecha todos juntos. Os cards têm a mesma
+     altura na grade; abrir só um deixaria espaço vazio nos outros. */
+  var moduleDetails = document.querySelectorAll('.module details');
+  var syncing = false;
+  Array.prototype.forEach.call(moduleDetails, function (d) {
+    d.addEventListener('toggle', function () {
+      if (syncing) return;
+      syncing = true;
+      Array.prototype.forEach.call(moduleDetails, function (other) { other.open = d.open; });
+      // o evento "toggle" é assíncrono: libera a trava depois que todos dispararem
+      setTimeout(function () { syncing = false; }, 0);
+    });
+  });
+
+  /* Entrada das seções */
+  var reveals = document.querySelectorAll('.reveal');
+  if (hasIO) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    Array.prototype.forEach.call(reveals, function (el) { io.observe(el); });
+  } else {
+    Array.prototype.forEach.call(reveals, function (el) { el.classList.add('is-visible'); });
+  }
+
+  /* CTA fixo */
+  var sticky = document.querySelector('[data-sticky-cta]');
+  var start = document.querySelector('[data-sticky-start]');
+  if (sticky && start) {
+    var link = sticky.querySelector('a');
+    var blockers = new Set();
+    var visible = false;
+
+    var update = function () {
+      var reached = start.getBoundingClientRect().top < window.innerHeight * 0.85;
+      var show = reached && blockers.size === 0;
+      if (show === visible) return;
+      visible = show;
+      sticky.classList.toggle('is-visible', show);
+      sticky.setAttribute('aria-hidden', show ? 'false' : 'true');
+      if (link) link.tabIndex = show ? 0 : -1;
+    };
+
+    // Esconde onde já existe um botão de compra grande na tela
+    if (hasIO) {
+      var blockIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) blockers.add(e.target); else blockers.delete(e.target);
+        });
+        update();
+      }, { threshold: 0.25 });
+      each('.offer, .final', function (el) { blockIO.observe(el); });
+    }
+
+    document.body.classList.add('has-sticky-cta');
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  }
+
+  /* Ano do rodapé */
+  each('[data-year]', function (el) { el.textContent = new Date().getFullYear(); });
+})();
