@@ -87,8 +87,9 @@ window.RH_CONFIG = {
       enabled: true,
       // [CONFIRMADO] Webhook SellFlux do Esquenta.
       webhookUrl: 'https://webhook.sellflux.app/v2/webhook/custom/f39c600d3d8414b3a7bd057498e97ede',
-      // Nomes dos parâmetros de pré-preenchimento usados no checkout.
-      prefillParams: { name: 'name', email: 'email', phone: 'phone' },
+      // Parâmetros de pré-preenchimento do checkout da Hotmart:
+      // nome, e-mail, DDD (phoneac) e número do telefone (phonenumber).
+      prefillParams: { name: 'name', email: 'email', phoneAreaCode: 'phoneac', phoneNumber: 'phonenumber' },
     },
   },
 

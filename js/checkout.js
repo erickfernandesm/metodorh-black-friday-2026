@@ -198,6 +198,9 @@
         if (names.name) prefill[names.name] = name;
         if (names.email) prefill[names.email] = email;
         if (names.phone) prefill[names.phone] = digits;
+        // Hotmart: DDD e número em campos separados
+        if (names.phoneAreaCode) prefill[names.phoneAreaCode] = digits.slice(0, 2);
+        if (names.phoneNumber) prefill[names.phoneNumber] = digits.slice(2);
         goToCheckout(prefill);
       });
     });
