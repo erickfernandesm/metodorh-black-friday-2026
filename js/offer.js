@@ -155,7 +155,6 @@
     if (isBF && offer.priceConfirmed === false) pending.push('Preço da Black (R$ ' + offer.cashPrice + ') ainda não confirmado.');
     if (!(offer.installments > 1)) pending.push('Parcelamento da Black não definido. A página mostra só o valor à vista.');
     if (!campaign.endsAt) pending.push('Data de encerramento não definida. A faixa com contador está oculta.');
-    if (/N103364259K\?off=2j6xzmn0/.test((C.checkout || {}).url || '')) pending.push('O checkout ainda é o link atual do site, não o do Esquenta Black Friday.');
     if (!pending.length) return;
 
     var el = document.createElement('aside');

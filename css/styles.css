@@ -1129,3 +1129,29 @@ body.has-sticky-cta .site-footer { padding-bottom: calc(110px + env(safe-area-in
 .tool-type span { font-family: var(--font-display); text-transform: uppercase; font-size: clamp(.7rem, 2.6vw, 1.05rem); line-height: 1.05; overflow-wrap: anywhere; }
 .tool-type small { font-size: clamp(.45rem, 1.6vw, .62rem); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--bf); line-height: 1.25; }
 @media (min-width: 1040px) { .tool-type { border-radius: 10px; } .tool-type span { font-size: 1rem; } .tool-type small { font-size: .6rem; } }
+
+/* Pop-up no celular: compacto, botão sem crescer (não corta) e texto numa linha */
+.lead-form .btn--cta { animation: cta-color 5s ease-in-out infinite, modal-btn-glow 1.8s ease-in-out infinite; white-space: nowrap; }
+@keyframes modal-btn-glow {
+  0%, 100% { box-shadow: 0 0 14px rgba(50, 70, 255, .45), 0 .18em 0 #0f16a8; }
+  50%      { box-shadow: 0 0 26px rgba(70, 90, 255, .8), 0 .18em 0 #0f16a8; }
+}
+.lead-form__privacy { display: block; text-align: center; line-height: 1.5; }
+.lead-form__privacy svg { display: inline-block; vertical-align: -2px; margin: 0 4px 0 0; }
+.lead-form__privacy a { white-space: nowrap; }
+@media (max-width: 480px) {
+  .lead-modal { width: calc(100% - 20px); max-height: calc(100dvh - 20px); border-radius: 18px; }
+  .lead-form { padding: 22px 16px 16px; }
+  .lead-form h2 { font-size: 2rem; padding-right: 44px; }
+  .lead-form__sub { font-size: .88rem; margin-bottom: 14px; }
+  .field { margin-bottom: 10px; }
+  .field span { font-size: .8rem; margin-bottom: 4px; }
+  .field input { min-height: 48px; padding: 10px 12px; }
+  .lead-form .btn--xl { min-height: 54px; padding: 14px 16px; font-size: clamp(1rem, 4.6vw, 1.25rem); }
+  .lead-modal__close { top: 10px; right: 10px; }
+  .lead-form__privacy { font-size: .75rem; margin-top: 10px; }
+}
+@media (max-height: 600px) {
+  .lead-form__sub { display: none; }
+  .lead-form h2 { margin-bottom: 12px; }
+}

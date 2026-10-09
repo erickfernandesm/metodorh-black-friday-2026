@@ -186,6 +186,7 @@
         utm_content: p.utm_content || '',
         utm_term: p.utm_term || '',
         sck: p.sck || '',
+        src: p.src || '',
         timestamp: new Date().toISOString(),
         page_url: location.href,
       }).then(function () {

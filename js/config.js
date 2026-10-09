@@ -68,9 +68,8 @@ window.RH_CONFIG = {
      CHECKOUT
      ---------------------------------------------------------------------- */
   checkout: {
-    // [PENDENTE] Troque pelo link do checkout de Black Friday.
-    // Hoje este é o checkout oficial usado pelo formulário do site atual (Hotmart).
-    url: 'https://pay.hotmart.com/N103364259K?off=2j6xzmn0',
+    // [CONFIRMADO] Checkout do Esquenta Black Friday (Hotmart, cupom de aluno).
+    url: 'https://pay.hotmart.com/N103364259K?offDiscount=50BLACKALUNO',
 
     // Parâmetros da URL da página que são repassados ao checkout
     // (UTMs + parâmetros de rastreio aceitos pela Hotmart).
@@ -86,7 +85,8 @@ window.RH_CONFIG = {
     // Com enabled: false, os botões vão direto para o checkout.
     leadCapture: {
       enabled: true,
-      webhookUrl: 'https://webhook.sellflux.app/v2/webhook/wordpress/37e214369f96f471972a99005a0a9da8',
+      // [CONFIRMADO] Webhook SellFlux do Esquenta.
+      webhookUrl: 'https://webhook.sellflux.app/v2/webhook/custom/f39c600d3d8414b3a7bd057498e97ede',
       // Nomes dos parâmetros de pré-preenchimento usados no checkout.
       prefillParams: { name: 'name', email: 'email', phone: 'phone' },
     },
@@ -110,7 +110,7 @@ window.RH_CONFIG = {
      ---------------------------------------------------------------------- */
   tracking: {
     gtmId: 'GTM-PGX58T8Q',
-    metaPixelId: '173653188072538',
+    metaPixelId: '3251089601854184',
     clarityId: 'rl00japbzt',
     utmify: true,
   },
