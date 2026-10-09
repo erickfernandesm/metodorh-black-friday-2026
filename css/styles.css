@@ -757,7 +757,7 @@ body.has-sticky-cta .site-footer { padding-bottom: calc(110px + env(safe-area-in
 @media (min-width: 760px) { .final__seal { width: 300px; } }
 @media (min-width: 960px) {
   .hero__seal {
-    top: 50%; right: 14vw; transform: translateY(-66%);
+    top: 50%; right: 14vw; transform: translateY(-78%);
     width: clamp(300px, 26vw, 480px);
   }
 }
@@ -926,3 +926,147 @@ body.has-sticky-cta .site-footer { padding-bottom: calc(110px + env(safe-area-in
   .hero__seal { margin-bottom: 0; }
   .hero .hero__tags { position: relative; z-index: 2; margin-top: -2px; }
 }
+
+/* Etiqueta "Só hoje" em formato de ticket (mesmo visual do selo 50% OFF) */
+.tag-today {
+  position: relative; display: inline-flex; align-items: center;
+  margin-left: 26px; /* espaço para a argola */
+  padding: 10px 18px 8px 34px;
+  font-family: var(--font-display); font-size: clamp(1.6rem, 1.1rem + 1.8vw, 2.3rem);
+  letter-spacing: .03em; text-transform: uppercase; line-height: 1; font-style: italic;
+  color: #fff;
+  text-shadow: 0 1px 0 #c9cfe6, 0 2px 0 #9aa3c7, 0 3px 0 #6c76a6, 0 6px 10px rgba(0, 0, 0, .55);
+  transform: rotate(-6deg);
+  isolation: isolate;
+  filter: drop-shadow(0 10px 14px rgba(0, 0, 0, .55));
+  animation: today-glow 2.2s ease-in-out infinite;
+}
+/* placa azul com ponta chanfrada à esquerda e furo */
+.tag-today::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(circle at 15px 50%, #000 0 5px, #c8ccd8 5.5px 7px, transparent 7.5px),
+    linear-gradient(160deg, #5a66ff 0%, #2f3bea 45%, #1a22b8 100%);
+  clip-path: polygon(14px 0, 100% 0, 100% 100%, 14px 100%, 0 70%, 0 30%);
+  border-radius: 6px;
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, .35), inset 0 -3px 0 rgba(0, 0, 40, .45);
+}
+/* argola metálica passando pelo furo */
+.tag-today::after {
+  content: ''; position: absolute; z-index: -2;
+  left: -24px; top: 50%; width: 42px; height: 18px; translate: 0 -50%;
+  border: 3px solid #d7dbe6; border-radius: 999px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .35), inset 0 0 0 1px rgba(0, 0, 0, .25);
+  rotate: -8deg;
+}
+@keyframes today-glow {
+  0%, 100% { filter: drop-shadow(0 10px 14px rgba(0, 0, 0, .55)) drop-shadow(0 0 8px rgba(58, 70, 255, .35)); }
+  50%      { filter: drop-shadow(0 10px 14px rgba(0, 0, 0, .55)) drop-shadow(0 0 20px rgba(90, 110, 255, .8)); }
+}
+@media (max-width: 959px) { .tag-today { font-size: 1.35rem; padding: 8px 14px 6px 28px; margin-left: 22px; } }
+@media (prefers-reduced-motion: reduce) { .tag-today { animation: none; } }
+
+/* Selo da oferta mais longo: quebra linha no celular em vez de vazar */
+@media (max-width: 559px) {
+  .offer__badge { white-space: normal; width: max-content; max-width: calc(100% - 24px); text-align: center; line-height: 1.1; font-size: 1rem; }
+}
+
+/* "O que você leva": vitalício + 5 módulos + bônus */
+@media (min-width: 900px) { .perks--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Contador de materiais acima das capas */
+.lifetime__media { min-width: 0; }
+.covers-count {
+  display: block;
+  margin: 0 0 14px; text-align: center;
+  font-family: var(--font-display); text-transform: uppercase; letter-spacing: .03em;
+  font-size: clamp(1.4rem, 1rem + 1.6vw, 2rem); line-height: 1.1; color: var(--text);
+}
+.covers-count strong { font-weight: 400; color: var(--bf); text-shadow: 0 0 .35em rgba(247, 147, 30, .5); }
+@media (min-width: 960px) { .covers-count { margin-bottom: 22px; } }
+
+/* "O que você leva": 5 módulos + 3 bônus num card só */
+.perks--3 { grid-template-columns: 1fr !important; }
+.perk--combo { flex-direction: row; align-items: center; gap: 14px; }
+.perk--combo > div { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.perk__plus { font-family: var(--font-display); font-size: 2.4rem; line-height: 1; color: var(--bf); flex: none; }
+@media (max-width: 459px) { .perk--combo { gap: 8px; } .perk__plus { font-size: 1.8rem; } }
+
+/* Selo "+20 materiais exclusivos" sobre as capas */
+.lifetime__media { position: relative; padding-top: 34px; }
+.covers-badge {
+  position: absolute; z-index: 3; top: 0; left: 6px;
+  width: 132px; aspect-ratio: 1; margin: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  border-radius: 50%; color: var(--ink);
+  background: radial-gradient(circle at 35% 30%, #ffc27a, var(--bf) 55%, #c96a06);
+  border: 3px dashed rgba(0, 0, 0, .35); outline: 4px solid var(--bf); outline-offset: 3px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, .6), 0 0 34px rgba(247, 147, 30, .55);
+  transform: rotate(-12deg);
+  font-family: var(--font-display); text-transform: uppercase; line-height: 1;
+  animation: badge-spin 6s ease-in-out infinite;
+}
+.covers-badge span { font-size: .78rem; letter-spacing: .04em; max-width: 92px; }
+.covers-badge strong { font-weight: 400; font-size: 2.6rem; margin: 2px 0; }
+@keyframes badge-spin { 0%, 100% { rotate: 0deg; scale: 1; } 50% { rotate: 6deg; scale: 1.05; } }
+@media (min-width: 960px) {
+  .lifetime__media { padding-top: 0; }
+  .covers-badge { top: -26px; left: -26px; width: 156px; }
+  .covers-badge span { font-size: .9rem; max-width: 110px; }
+  .covers-badge strong { font-size: 3.1rem; }
+}
+@media (prefers-reduced-motion: reduce) { .covers-badge { animation: none; } }
+@media (max-width: 959px) { .hero { padding-top: 4px; } .hero__seal { margin-top: -6px; } }
+
+/* "O que você leva": card único (vitalício + 5 módulos + 3 bônus) */
+.leva {
+  border: 1px solid var(--bf); border-radius: var(--radius-lg); overflow: hidden;
+  background: linear-gradient(120deg, rgba(247, 147, 30, .18), rgba(247, 147, 30, .03) 55%), var(--surface);
+  box-shadow: 0 0 50px -14px rgba(247, 147, 30, .45);
+  max-width: 980px;
+}
+.leva__head { display: flex; align-items: center; gap: 16px; margin: 0; padding: 20px 22px; border-bottom: 1px dashed rgba(247, 147, 30, .4); font-size: 1.05rem; line-height: 1.4; }
+.leva__inf { font-family: var(--font-display); font-weight: 400; font-size: 3.2rem; line-height: 1; color: var(--bf); text-shadow: 0 0 .35em rgba(247, 147, 30, .55); flex: none; }
+.leva__head b { color: var(--bf); text-transform: uppercase; }
+.leva__row { display: flex; align-items: center; gap: 14px; padding: 20px 22px; }
+.leva__row > div { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; color: var(--muted); font-size: .95rem; line-height: 1.4; }
+.leva__row strong { font-family: var(--font-display); font-weight: 400; font-size: 3rem; line-height: 1; color: var(--bf); }
+.leva__plus { font-family: var(--font-display); font-size: 2.4rem; color: var(--text); flex: none; }
+@media (max-width: 459px) {
+  .leva__head { padding: 16px; gap: 12px; font-size: .95rem; }
+  .leva__inf { font-size: 2.6rem; }
+  .leva__row { padding: 16px; gap: 8px; }
+  .leva__row > div { font-size: .85rem; }
+  .leva__row strong { font-size: 2.4rem; }
+  .leva__plus { font-size: 1.8rem; }
+}
+
+/* Selo da divisa mais alto (fica sobre o fim do bloco "O que você leva") */
+.seal-divider img { transform: translateY(-78%); }
+.js .seal-divider img.reveal { transform: translateY(-78%) scale(.85); }
+.js .seal-divider img.reveal.is-visible { transform: translateY(-78%) scale(1); }
+.seal-divider::before { transform: translate(-50%, -78%); }
+.seal-divider + .section { padding-top: calc(var(--section-y) + 20px) !important; }
+
+/* Bloco único: "O que você leva" + 5 módulos (+ bônus logo em seguida) */
+.subtitle {
+  font-family: var(--font-display); text-transform: uppercase; font-weight: 400;
+  font-size: clamp(1.8rem, 1.3rem + 2.2vw, 2.8rem); line-height: 1.1;
+  margin: clamp(36px, 5vw, 56px) 0 22px;
+}
+.subtitle .hl { text-shadow: 0 0 .35em rgba(247, 147, 30, .45); }
+/* seção anterior ganha espaço embaixo para o selo da divisa (metade em cada bloco) */
+#identificacao { padding-bottom: calc(var(--section-y) + 70px); }
+#modulos { padding-bottom: 24px; }
+#bonus { padding-top: 24px; background: #0b0b0b; }
+#bonus::before { display: none; }
+#bonus .title { font-size: clamp(1.8rem, 1.3rem + 2.2vw, 2.8rem); margin-top: clamp(24px, 4vw, 40px); }
+.leva__head { border-bottom: 0; }
+/* selo da divisa: um pouco mais baixo (mais dentro do bloco "O que você leva") */
+.seal-divider img { transform: translateY(-38%); }
+.js .seal-divider img.reveal { transform: translateY(-38%) scale(.85); }
+.js .seal-divider img.reveal.is-visible { transform: translateY(-38%) scale(1); }
+.seal-divider::before { transform: translate(-50%, -38%); }
+#identificacao { padding-bottom: calc(var(--section-y) + 30px); }
+.seal-divider + .section { padding-top: calc(var(--section-y) + 110px) !important; }
+@media (max-width: 759px) { .seal-divider + .section { padding-top: calc(var(--section-y) + 80px) !important; } }

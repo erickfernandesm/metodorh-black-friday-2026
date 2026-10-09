@@ -135,6 +135,14 @@
     tick();
   }
 
+  /* Etiqueta de urgência ("Só hoje") ----------------------------------- */
+  function renderUrgencyTag() {
+    var txt = campaign.urgencyTag;
+    each('[data-urgency-tag]', function (el) {
+      if (txt) el.textContent = txt; else el.hidden = true;
+    });
+  }
+
   /* Aviso de prévia --------------------------------------------------------
      Lista o que ainda falta configurar. Aparece só em ambiente local ou com
      ?preview=1 na URL; nunca para o visitante comum. */
@@ -147,7 +155,7 @@
     if (isBF && offer.priceConfirmed === false) pending.push('Preço da Black (R$ ' + offer.cashPrice + ') ainda não confirmado.');
     if (!(offer.installments > 1)) pending.push('Parcelamento da Black não definido. A página mostra só o valor à vista.');
     if (!campaign.endsAt) pending.push('Data de encerramento não definida. A faixa com contador está oculta.');
-    if (/N103364259K\?off=2j6xzmn0/.test((C.checkout || {}).url || '')) pending.push('O checkout ainda é o link atual do site, não o da Black Friday.');
+    if (/N103364259K\?off=2j6xzmn0/.test((C.checkout || {}).url || '')) pending.push('O checkout ainda é o link atual do site, não o do Esquenta Black Friday.');
     if (!pending.length) return;
 
     var el = document.createElement('aside');
@@ -163,6 +171,7 @@
   function init() {
     renderPrice();
     renderCountdown();
+    renderUrgencyTag();
     renderPreviewNotice();
   }
 
