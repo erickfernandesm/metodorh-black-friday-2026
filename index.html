@@ -30,7 +30,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="css/styles.css?v=48">
+  <link rel="stylesheet" href="css/styles.css?v=53">
 
   <script>document.documentElement.classList.add('js');</script>
 
@@ -390,6 +390,7 @@
       </ul>
 
       <div class="price">
+        <img class="price-seal" src="img/selo-50-hoje-240.webp?v=2" srcset="img/selo-50-hoje-240.webp?v=2 240w, img/selo-50-hoje-480.webp?v=2 480w" sizes="(min-width: 640px) 150px, 112px" alt="50% OFF só hoje" width="240" height="225" loading="lazy" decoding="async">
         <p class="price__from" data-if-list>De <s data-price-list>R$ 2.997</s> por</p>
         <p class="price__installments">
           <span class="price__x" data-price-installments>12x de</span>
@@ -500,7 +501,7 @@
     <img class="final__seal" src="img/selo-black-560.webp?v=3" srcset="img/selo-black-320.webp?v=3 320w, img/selo-black-560.webp?v=3 560w" sizes="(min-width: 760px) 300px, 220px" alt="Esquenta Black Friday" width="560" height="519" loading="lazy" decoding="async">
     <h2 id="final-title" class="final__title">Acesso vitalício com <span class="hl" data-discount>50% OFF</span></h2>
     <p class="final__sub">Esquenta Black Friday exclusiva para alunos. A plataforma completa de RH, para sempre. Nunca mais compre outra ferramenta de RH.</p>
-    <p class="final__price" data-price-line>12x de R$ 212,66 ou R$ 1.997,00 à vista</p>
+    <p class="final__price"><img class="final-price-seal" src="img/selo-50-hoje-240.webp?v=2" srcset="img/selo-50-hoje-240.webp?v=2 240w, img/selo-50-hoje-480.webp?v=2 480w" sizes="96px" alt="50% OFF só hoje" width="240" height="225" loading="lazy" decoding="async"><span data-price-line>12x de R$ 212,66 ou R$ 1.997,00 à vista</span></p>
     <a class="btn btn--cta btn--xl" href="#oferta" data-checkout data-cta="final">Quero meu acesso agora <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
   </div>
 </section>
@@ -521,8 +522,9 @@
 <!-- CTA fixo: aparece a partir dos módulos -->
 <div class="sticky-cta" data-sticky-cta aria-hidden="true">
   <div class="sticky-cta__price">
-    <span data-sticky-label>Esquenta · <span data-discount>50% OFF</span></span>
-    <strong data-price-short>12x de R$ 212,66</strong>
+    <span class="sticky-cta__seal"><img class="sticky-seal" src="img/selo-50-hoje-240.webp?v=2" srcset="img/selo-50-hoje-240.webp?v=2 240w, img/selo-50-hoje-480.webp?v=2 480w" sizes="48px" alt="50% OFF só hoje" width="240" height="225" loading="lazy" decoding="async"></span>
+    <span class="sticky-cta__txt"><span data-sticky-label>Esquenta · <span data-discount>50% OFF</span></span>
+    <strong data-price-short>12x de R$ 212,66</strong></span>
   </div>
   <a class="btn btn--cta" href="#oferta" data-checkout data-cta="sticky" tabindex="-1">Quero agora <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
 </div>
