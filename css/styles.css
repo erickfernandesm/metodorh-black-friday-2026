@@ -1195,27 +1195,3 @@ body.has-sticky-cta .site-footer { padding-bottom: calc(110px + env(safe-area-in
   .sticky-cta__txt > strong { font-size: .82rem; }
   .sticky-cta .btn { padding: 9px 12px; font-size: .92rem; gap: .35em; }
 }
-
-/* Carimbo "Oferta cancelada" (no lugar do selo 50% OFF) */
-.stamp-cancel {
-  display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 8px 14px 6px; line-height: .95; text-transform: uppercase; text-align: center;
-  font-family: var(--font-display); color: #ff4b4b;
-  border: 3px solid #ff4b4b; border-radius: 10px; outline: 2px solid rgba(255, 75, 75, .45); outline-offset: 3px;
-  background: rgba(0, 0, 0, .55);
-  transform: rotate(-10deg);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, .55);
-  flex: none;
-}
-.stamp-cancel span { font-size: .8rem; letter-spacing: .18em; }
-.stamp-cancel strong { font-weight: 400; font-size: 1.45rem; letter-spacing: .04em; }
-.hero__tags .stamp-cancel { margin-left: 6px; }
-.stamp-cancel--price { display: flex; width: max-content; margin: 0 auto 14px; }
-.stamp-cancel--sm { padding: 5px 10px 4px; }
-.stamp-cancel--sm strong { font-size: 1.1rem; }
-.stamp-cancel--sm span { font-size: .65rem; }
-@media (min-width: 960px) { .stamp-cancel strong { font-size: 1.8rem; } .stamp-cancel span { font-size: .9rem; } }
-/* celular: carimbo do hero no canto superior direito (mesmo lugar do selo antigo) */
-@media (max-width: 959px) {
-  .hero .stamp-cancel { position: absolute; z-index: 3; top: 28px; right: 14px; margin: 0; }
-}

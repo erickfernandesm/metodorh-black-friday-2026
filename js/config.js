@@ -46,8 +46,8 @@ window.RH_CONFIG = {
     cashPrice: 1997,               // valor real à vista
     // Com promoção ativa, o "% OFF" é calculado a partir de listPrice e cashPrice.
 
-    installments: null,           // [PENDENTE] parcelamento do preço cheio (null = só à vista)
-    installmentValue: null,
+    installments: 12,             // parcelamento do preço cheio
+    installmentValue: 212.66,
     installmentNote: '',           // ex.: 'sem juros' (preencha só se for verdade)
 
     showSavings: true,             // mostra "economia" (só quando isBlackFridayPrice = true)
