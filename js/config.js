@@ -38,17 +38,16 @@ window.RH_CONFIG = {
      "condição de Black Friday" nem exibe economia.
      ---------------------------------------------------------------------- */
   offer: {
-    isBlackFridayPrice: true,      // exibe selo Black Friday, "% OFF" e economia
+    isBlackFridayPrice: false,     // promoção encerrada: sem selo de desconto nem economia
 
-    // [CONFIRMADO] Preço do Esquenta: R$ 998,50 à vista ou 12x de R$ 106,33.
+    // Oferta do Esquenta encerrada: valor real R$ 1.997 à vista.
     priceConfirmed: true,
-    listPrice: 1997,               // preço "De" (preço atual do site à vista)
-    cashPrice: 998.50,             // preço do Esquenta à vista
-    // O "% OFF" é calculado sozinho a partir de listPrice e cashPrice (hoje: 50%).
+    listPrice: null,               // sem preço "De" (preço cheio)
+    cashPrice: 1997,               // valor real à vista
+    // Com promoção ativa, o "% OFF" é calculado a partir de listPrice e cashPrice.
 
-    // [CONFIRMADO] Parcelamento do Esquenta.
-    installments: 12,
-    installmentValue: 106.33,
+    installments: null,           // [PENDENTE] parcelamento do preço cheio (null = só à vista)
+    installmentValue: null,
     installmentNote: '',           // ex.: 'sem juros' (preencha só se for verdade)
 
     showSavings: true,             // mostra "economia" (só quando isBlackFridayPrice = true)
@@ -68,8 +67,8 @@ window.RH_CONFIG = {
      CHECKOUT
      ---------------------------------------------------------------------- */
   checkout: {
-    // [CONFIRMADO] Checkout do Esquenta Black Friday (Hotmart, cupom de aluno).
-    url: 'https://pay.hotmart.com/N103364259K?offDiscount=50BLACKALUNO',
+    // Checkout sem o cupom de 50% (oferta encerrada).
+    url: 'https://pay.hotmart.com/N103364259K',
 
     // Parâmetros da URL da página que são repassados ao checkout
     // (UTMs + parâmetros de rastreio aceitos pela Hotmart).
