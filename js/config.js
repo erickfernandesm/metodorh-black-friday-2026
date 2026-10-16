@@ -21,6 +21,7 @@ window.RH_CONFIG = {
     // Exemplo: '2026-11-30T23:59:59-03:00'
     endsAt: null,
 
+
     // Etiqueta de urgência ao lado de "BLACK FRIDAY" (hero e bloco do vitalício).
     // Use somente se for verdade no dia em que a página estiver no ar.
     // null esconde a etiqueta.

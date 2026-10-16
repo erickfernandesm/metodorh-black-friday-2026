@@ -1195,3 +1195,20 @@ body.has-sticky-cta .site-footer { padding-bottom: calc(110px + env(safe-area-in
   .sticky-cta__txt > strong { font-size: .82rem; }
   .sticky-cta .btn { padding: 9px 12px; font-size: .92rem; gap: .35em; }
 }
+
+/* Selo "50% OFF só hoje" vencido: apagado + faixa "ENCERRADA" atravessada */
+.seal-ended { position: relative; display: inline-block; flex: none; animation: none !important; filter: none !important; }
+.seal-ended img { display: block; width: 100%; height: auto; filter: grayscale(1) brightness(.55) contrast(1.1); opacity: .9; }
+.seal-ended__band {
+  position: absolute; left: -10%; right: -10%; top: 60%;
+  transform: translateY(-50%) rotate(-18deg);
+  padding: .32em 0 .26em; text-align: center;
+  font-family: var(--font-display); text-transform: uppercase; letter-spacing: .08em; line-height: 1;
+  font-size: clamp(.8rem, .2rem + 1.4vw, 1.05rem);
+  color: #fff; background: #e0262e;
+  border-block: 2px solid rgba(255, 255, 255, .85);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .55);
+}
+.price-seal.seal-ended .seal-ended__band { font-size: 1.05rem; }
+.final-price-seal.seal-ended .seal-ended__band { font-size: .8rem; }
+@media (max-width: 959px) { .hero .deal-seal.seal-ended .seal-ended__band { font-size: .95rem; } }
