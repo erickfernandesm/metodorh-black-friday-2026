@@ -1305,3 +1305,17 @@ body.has-sticky-cta .site-footer { padding-bottom: calc(110px + env(safe-area-in
 @media (min-width: 960px) { .covers-badge { width: 164px; } .covers-badge .covers-badge__top { font-size: 1rem; max-width: 130px; } }
 /* espaço entre linhas para o acento de "PRÁTICAS" não encostar em "FERRAMENTAS" */
 .covers-badge span { line-height: 1.2; }
+
+/* Chamada final: o brilho laranja some aos poucos até o preto do rodapé,
+   sem o corte seco na divisa com a faixa "BLACK FRIDAY" */
+.final {
+  background:
+    linear-gradient(180deg, transparent 55%, #000 100%),
+    radial-gradient(ellipse 60% 55% at 50% 70%, rgba(247, 147, 30, .2), transparent 70%),
+    var(--bg);
+}
+
+/* Faixa do rodapé: o brilho laranja não é mais cortado na borda de cima
+   (só corta na lateral, para não gerar rolagem horizontal) */
+.tapes--footer { overflow: visible; overflow-x: clip; overflow-y: visible; height: 72px; margin-top: 24px; }
+@media (min-width: 760px) { .tapes--footer { height: 84px; } }
