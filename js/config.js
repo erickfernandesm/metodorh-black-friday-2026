@@ -102,11 +102,13 @@ window.RH_CONFIG = {
       enabled: true,
       // [CONFIRMADO] Webhook SellFlux da campanha.
       webhookUrl: 'https://webhook.sellflux.app/v2/webhook/custom/f39c600d3d8414b3a7bd057498e97ede',
-      // Opcional: um webhook por público. Vazio = usa o webhookUrl acima.
-      // O lead já vai com o campo aluno: 'sim' / 'nao' para separar na SellFlux.
+      // Um webhook por público. Vazio = usa o webhookUrl acima.
+      // O lead também vai com o campo aluno: 'sim' / 'nao'.
       webhookUrls: {
-        'aluno': '',
-        'nao-aluno': '',
+        // [CONFIRMADO] alunos
+        'aluno': 'https://webhook.sellflux.app/v2/webhook/custom/f39c600d3d8414b3a7bd057498e97ede',
+        // [CONFIRMADO] não alunos
+        'nao-aluno': 'https://webhook.sellflux.app/v2/webhook/custom/a65b8575d8b7f0aa22fd74c951b5c3a4',
       },
       // Parâmetros de pré-preenchimento do checkout da Hotmart:
       // nome, e-mail, DDD (phoneac) e número do telefone (phonenumber).

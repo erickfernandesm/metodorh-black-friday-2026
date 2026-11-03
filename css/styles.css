@@ -1298,3 +1298,10 @@ body.has-sticky-cta .site-footer { padding-bottom: calc(110px + env(safe-area-in
 /* Selo "+250 ferramentas práticas": número de 3 dígitos cabe no círculo */
 .covers-badge strong { font-size: 2.25rem; }
 @media (min-width: 960px) { .covers-badge strong { font-size: 2.7rem; } }
+
+/* Selo das capas: "+20 cursos e" em cima, "+250 ferramentas práticas" embaixo */
+.covers-badge { width: 140px; }
+.covers-badge .covers-badge__top { font-size: .85rem; max-width: 110px; }
+@media (min-width: 960px) { .covers-badge { width: 164px; } .covers-badge .covers-badge__top { font-size: 1rem; max-width: 130px; } }
+/* espaço entre linhas para o acento de "PRÁTICAS" não encostar em "FERRAMENTAS" */
+.covers-badge span { line-height: 1.2; }
