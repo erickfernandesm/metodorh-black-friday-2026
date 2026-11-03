@@ -51,9 +51,15 @@
 
   var visitParams = captureParams();
 
-  function buildCheckoutUrl(prefill) {
+  // Checkout de cada público ("aluno" / "nao-aluno"), com o padrão como reserva
+  function checkoutBase(audience) {
+    return (audience && co.urls && co.urls[audience]) || co.url;
+  }
+
+  function buildCheckoutUrl(prefill, audience) {
+    var base = checkoutBase(audience);
     var url;
-    try { url = new URL(co.url); } catch (e) { return co.url || '#oferta'; }
+    try { url = new URL(base); } catch (e) { return base || '#oferta'; }
     var p = url.searchParams;
     Object.keys(visitParams).forEach(function (k) { p.set(k, visitParams[k]); });
     var defaults = co.defaultParams || {};
@@ -62,9 +68,9 @@
     return url.toString();
   }
 
-  function goToCheckout(prefill) {
-    track.event('begin_checkout', { checkout_url: co.url });
-    window.location.href = buildCheckoutUrl(prefill);
+  function goToCheckout(prefill, audience) {
+    track.event('begin_checkout', { checkout_url: checkoutBase(audience), audience: audience || '' });
+    window.location.href = buildCheckoutUrl(prefill, audience);
   }
 
   /* Modal do formulário ----------------------------------------------------- */
@@ -72,9 +78,11 @@
   var form = document.querySelector('[data-lead-form]');
   var useModal = lead.enabled && lead.webhookUrl && modal && typeof modal.showModal === 'function';
   var lastTrigger = null;
+  var lastAudience = '';
 
   function openModal(trigger) {
     lastTrigger = trigger;
+    lastAudience = trigger.getAttribute('data-checkout') || '';
     modal.showModal();
     document.documentElement.style.overflow = 'hidden';
     var first = form.querySelector('input');
@@ -99,9 +107,8 @@
 
   /* Botões de compra ---------------------------------------------------------- */
   function bindCheckoutButtons() {
-    var href = buildCheckoutUrl();
     Array.prototype.forEach.call(document.querySelectorAll('[data-checkout]'), function (btn) {
-      btn.setAttribute('href', href);
+      btn.setAttribute('href', buildCheckoutUrl(null, btn.getAttribute('data-checkout')));
       if (useModal) btn.setAttribute('aria-haspopup', 'dialog');
     });
   }
@@ -116,7 +123,7 @@
     if (e.ctrlKey || e.metaKey || e.shiftKey || e.button === 1) return;
     e.preventDefault();
     if (useModal) openModal(btn);
-    else goToCheckout();
+    else goToCheckout(null, btn.getAttribute('data-checkout'));
   });
 
   /* Formulário ---------------------------------------------------------------- */
@@ -133,7 +140,9 @@
 
   function sendLead(data) {
     // Não deixa o visitante esperando mais de 2,5 s pelo webhook
-    var request = fetch(lead.webhookUrl, {
+    var hooks = lead.webhookUrls || {};
+    var hook = (lastAudience && hooks[lastAudience]) || lead.webhookUrl;
+    var request = fetch(hook, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -180,6 +189,7 @@
         name: name,
         email: email,
         phone: digits,
+        aluno: lastAudience === 'aluno' ? 'sim' : (lastAudience === 'nao-aluno' ? 'nao' : ''),
         utm_source: p.utm_source || '',
         utm_medium: p.utm_medium || '',
         utm_campaign: p.utm_campaign || '',
@@ -201,7 +211,7 @@
         // Hotmart: DDD e número em campos separados
         if (names.phoneAreaCode) prefill[names.phoneAreaCode] = digits.slice(0, 2);
         if (names.phoneNumber) prefill[names.phoneNumber] = digits.slice(2);
-        goToCheckout(prefill);
+        goToCheckout(prefill, lastAudience);
       });
     });
   }

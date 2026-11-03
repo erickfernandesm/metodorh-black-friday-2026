@@ -153,7 +153,7 @@
     var pending = [];
     if (!isBF) pending.push('Preço de Black Friday não definido. A página mostra o preço atual do site.');
     if (isBF && offer.priceConfirmed === false) pending.push('Preço da Black (R$ ' + offer.cashPrice + ') ainda não confirmado.');
-    if (!(offer.installments > 1)) pending.push('Parcelamento da Black não definido. A página mostra só o valor à vista.');
+    if (!(offer.installments > 1) && !offer.tiers) pending.push('Parcelamento da Black não definido. A página mostra só o valor à vista.');
     if (!campaign.endsAt) pending.push('Data de encerramento não definida. A faixa com contador está oculta.');
     if (!pending.length) return;
 
@@ -167,8 +167,34 @@
     document.body.appendChild(el);
   }
 
+  /* Preço por público ("Já sou aluno" / "Não sou aluno") ---------------- */
+  function renderTiers() {
+    var tiers = offer.tiers;
+    if (!tiers || !(offer.listPrice > 0)) return;
+    var keys = Object.keys(tiers);
+    var pcts = [];
+    keys.forEach(function (k) {
+      var t = tiers[k];
+      var pct = Math.round((1 - t.cashPrice / offer.listPrice) * 100);
+      t.pct = pct;
+      pcts.push(pct);
+      // A página mostra só o % de desconto, sem valores em reais
+      each('[data-tier="' + k + '"] [data-tier-off]', function (el) { el.textContent = pct + '% OFF'; });
+    });
+    var max = Math.max.apply(null, pcts);
+    var min = Math.min.apply(null, pcts);
+    each('[data-discount]', function (el) {
+      el.textContent = (max !== min ? 'Até ' : '') + max + '% OFF';
+      el.hidden = !isBF;
+    });
+    setText('[data-price-line]', keys.map(function (k) {
+      return tiers[k].label + ' ' + tiers[k].pct + '% OFF';
+    }).join(' · '));
+  }
+
   function init() {
     renderPrice();
+    renderTiers();
     renderCountdown();
     renderUrgencyTag();
     renderPreviewNotice();

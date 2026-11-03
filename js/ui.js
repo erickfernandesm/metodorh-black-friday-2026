@@ -87,7 +87,7 @@
   var sticky = document.querySelector('[data-sticky-cta]');
   var start = document.querySelector('[data-sticky-start]');
   if (sticky && start) {
-    var link = sticky.querySelector('a');
+    var links = sticky.querySelectorAll('a');
     var blockers = new Set();
     var visible = false;
 
@@ -98,7 +98,7 @@
       visible = show;
       sticky.classList.toggle('is-visible', show);
       sticky.setAttribute('aria-hidden', show ? 'false' : 'true');
-      if (link) link.tabIndex = show ? 0 : -1;
+      Array.prototype.forEach.call(links, function (a) { a.tabIndex = show ? 0 : -1; });
     };
 
     // Esconde onde já existe um botão de compra grande na tela

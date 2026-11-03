@@ -39,16 +39,24 @@ window.RH_CONFIG = {
      "condição de Black Friday" nem exibe economia.
      ---------------------------------------------------------------------- */
   offer: {
-    isBlackFridayPrice: false,     // promoção encerrada: sem selo de desconto nem economia
+    isBlackFridayPrice: true,      // Black Friday: 30% OFF, preço "De" e economia
 
-    // Oferta do Esquenta encerrada: valor real R$ 1.997 à vista.
+    // [CONFIRMADO] Black Friday com um preço por público (sobre R$ 1.997):
+    //   alunos      40% OFF  R$ 1.198,20  (cupom BLACKALUNO40)
+    //   não alunos  35% OFF  R$ 1.298,05  (cupom BLACK35)
     priceConfirmed: true,
-    listPrice: null,               // sem preço "De" (preço cheio)
-    cashPrice: 1997,               // valor real à vista
+    listPrice: 1997,               // preço "De" (preço cheio)
+    cashPrice: 1198.20,            // menor preço (referência); os preços de cada público ficam em tiers
+    tiers: {
+      'aluno':     { label: 'Alunos',     cashPrice: 1198.20 },
+      'nao-aluno': { label: 'Não alunos', cashPrice: 1298.05 },
+    },
+    // A página NÃO mostra valores em reais: só o % OFF de cada público
+    // (calculado com listPrice e o cashPrice de cada um). Os valores aparecem no checkout.
     // Com promoção ativa, o "% OFF" é calculado a partir de listPrice e cashPrice.
 
-    installments: 12,             // parcelamento do preço cheio
-    installmentValue: 212.66,
+    installments: null,            // parcelas variam por público: ver tierNote
+    installmentValue: null,
     installmentNote: '',           // ex.: 'sem juros' (preencha só se for verdade)
 
     showSavings: true,             // mostra "economia" (só quando isBlackFridayPrice = true)
@@ -68,8 +76,15 @@ window.RH_CONFIG = {
      CHECKOUT
      ---------------------------------------------------------------------- */
   checkout: {
-    // Checkout sem o cupom de 50% (oferta encerrada).
+    // Checkout padrão (usado se o botão não indicar aluno / não aluno).
     url: 'https://pay.hotmart.com/N103364259K',
+
+    // Um checkout por botão: "Já sou aluno" e "Não sou aluno".
+    // [CONFIRMADO] alunos: cupom BLACKALUNO40 (40%) · não alunos: BLACK35 (35%).
+    urls: {
+      'aluno': 'https://pay.hotmart.com/?off=2j6xzmn0&offDiscount=BLACKALUNO40',
+      'nao-aluno': 'https://pay.hotmart.com/?off=2j6xzmn0&offDiscount=BLACK35',
+    },
 
     // Parâmetros da URL da página que são repassados ao checkout
     // (UTMs + parâmetros de rastreio aceitos pela Hotmart).
@@ -85,8 +100,14 @@ window.RH_CONFIG = {
     // Com enabled: false, os botões vão direto para o checkout.
     leadCapture: {
       enabled: true,
-      // [CONFIRMADO] Webhook SellFlux do Esquenta.
+      // [CONFIRMADO] Webhook SellFlux da campanha.
       webhookUrl: 'https://webhook.sellflux.app/v2/webhook/custom/f39c600d3d8414b3a7bd057498e97ede',
+      // Opcional: um webhook por público. Vazio = usa o webhookUrl acima.
+      // O lead já vai com o campo aluno: 'sim' / 'nao' para separar na SellFlux.
+      webhookUrls: {
+        'aluno': '',
+        'nao-aluno': '',
+      },
       // Parâmetros de pré-preenchimento do checkout da Hotmart:
       // nome, e-mail, DDD (phoneac) e número do telefone (phonenumber).
       prefillParams: { name: 'name', email: 'email', phoneAreaCode: 'phoneac', phoneNumber: 'phonenumber' },
