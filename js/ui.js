@@ -129,7 +129,8 @@
 (function () {
   'use strict';
   var sec = document.getElementById('oferta');
-  var grid = sec && sec.querySelector('.offer--tiers');
+  // cartões visíveis na fase atual (dois no dia 05/11, um só no resto do mês)
+  var grid = sec && Array.prototype.filter.call(sec.querySelectorAll('.offer--tiers'), function (g) { return g.offsetParent !== null; })[0];
   if (!grid || !window.bfConfete || !('IntersectionObserver' in window)) return;
   if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var io = new IntersectionObserver(function (es) {

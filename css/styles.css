@@ -1796,3 +1796,49 @@ html.bf-intro-on:not(.bf-intro-saindo) .wall__track { animation-play-state: paus
 }
 @keyframes cta-breathe { 0%, 100% { scale: 1; } 50% { scale: 1.03; } }
 @media (prefers-reduced-motion: reduce) { .hero__unmute-pill, .btn--cta { animation: none !important; } }
+
+/* FASES DA CAMPANHA ========================================================
+   Até 05/11: data-fase="hoje". A partir de 06/11 00h00: <html class="fase-mes">
+   e data-fase="mes" (troca feita no <head> do index.html). */
+html:not(.fase-mes) [data-fase="mes"], html.fase-mes [data-fase="hoje"] { display: none !important; }
+/* Botão único da fase "mês": laranja Black Friday */
+.btn--cta[data-checkout="black30"] {
+  color: var(--ink);
+  border-color: rgba(255, 214, 160, .85);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .35);
+  background: linear-gradient(100deg, #e57a00 0%, #f7931e 30%, #ffb347 50%, #f7931e 70%, #e57a00 100%);
+  background-size: 220% 100%;
+  animation: cta-color 5s ease-in-out infinite, cta-pulse-bf 1.8s ease-out infinite;
+}
+.cta-pair--solo .btn { flex: 0 1 auto; }
+.lifetime .cta-pair--solo, .final .cta-pair--solo { justify-content: center; }
+.sticky-cta .cta-pair--sticky .btn[data-checkout="black30"] { box-shadow: 0 .18em 0 #9a4f00; animation: cta-color 5s ease-in-out infinite; }
+.recap__card .btn--cta[data-checkout="black30"] { background: #0c0c0c; color: #fff; border-color: #0c0c0c; text-shadow: none; animation: none; box-shadow: none; }
+.offer.offer--single { max-width: 560px; grid-template-columns: 1fr !important; }
+.offer--single .tier__flag { right: auto; left: 50%; transform: translate(-50%, -55%) rotate(-2deg); }
+@media (max-width: 959px) {
+  .btn--cta[data-checkout="black30"] { animation: cta-breathe 1.8s ease-in-out infinite; box-shadow: 0 0 24px rgba(247, 147, 30, .55), 0 .18em 0 #9a4f00; }
+  .sticky-cta .cta-pair--sticky .btn[data-checkout="black30"], .recap__card .btn--cta[data-checkout="black30"] { animation: none; }
+  .cta-pair--solo .btn { flex-basis: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .btn--cta[data-checkout="black30"] { animation: none !important; } }
+/* Botão único: texto sempre numa linha (fonte acompanha a largura no celular) */
+.cta-pair--solo .btn { white-space: nowrap; }
+@media (max-width: 959px) {
+  .cta-pair--solo .btn, .offer--single .btn { font-size: min(1.4rem, calc((100vw - 40px) / 17)); padding-inline: 16px; white-space: nowrap; }
+}
+/* Recapitulação no celular: botão único cabe no cartão laranja sem vazar */
+.recap__grid > * { min-width: 0; }
+@media (max-width: 959px) {
+  .recap__card .cta-pair--solo .btn { font-size: min(1.3rem, calc((100vw - 40px) / 20)); padding-inline: 12px; width: 100%; }
+}
+/* Cartões no celular: nada passa da largura da tela; o texto do botão quebra
+   em duas linhas quando não couber numa só */
+.offer--tiers > *, .recap__card { min-width: 0; }
+.recap__from s { white-space: nowrap; }
+@media (max-width: 959px) {
+  .offer--single .btn, .recap__card .cta-pair--solo .btn {
+    white-space: normal; text-wrap: balance; line-height: 1.1;
+    font-size: min(1.35rem, calc((100vw - 40px) / 16)); padding: 14px 16px; width: 100%;
+  }
+}

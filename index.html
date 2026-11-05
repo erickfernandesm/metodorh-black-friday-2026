@@ -31,9 +31,32 @@
   <!-- fonte do texto sem bloquear a primeira pintura da página -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
-  <link rel="stylesheet" href="css/styles.css?v=20261106f">
+  <link rel="stylesheet" href="css/styles.css?v=20261106g">
 
   <script>document.documentElement.classList.add('js');</script>
+  <!-- FASE DA CAMPANHA
+       Até 05/11 23h59 (Brasília): Black de um dia, aluno 40% / novo aluno 35%.
+       A partir de 06/11/2026 00h00: 30% OFF o mês inteiro, público único.
+       Os trechos de cada fase têm data-fase="hoje" ou data-fase="mes".
+       Prévia: ?fase=mes ou ?fase=hoje na URL. -->
+  <script>
+  (function () {
+    var INICIO_MES = Date.parse('2026-11-06T00:00:00-03:00');
+    var h = document.documentElement, q = location.search;
+    var forcada = /[?&]fase=mes/.test(q) ? true : (/[?&]fase=hoje/.test(q) ? false : null);
+    var mes = forcada === null ? Date.now() >= INICIO_MES : forcada;
+    if (mes) h.classList.add('fase-mes');
+    window.RH_FASE = { mes: mes, inicioMes: INICIO_MES };
+    if (mes) { document.title = 'Black Friday Método RH Estratégico | 30% OFF no acesso vitalício'; return; }
+    if (forcada !== null) return;
+    // Página aberta na virada: recarrega sozinha à meia-noite (e ao voltar
+    // para a aba, caso o celular tenha dormido e o relógio passado da hora)
+    function confere() { if (Date.now() >= INICIO_MES) location.reload(); }
+    var falta = INICIO_MES - Date.now();
+    if (falta < 864e5) setTimeout(confere, falta + 1000);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) confere(); });
+  })();
+  </script>
 
   <!-- REVELAÇÃO DA BLACK (mesma abertura da página da Caixa de Ferramentas):
        logo grande no centro, balanço, confetes e some. Uma vez por sessão,
@@ -145,12 +168,12 @@ window.bfConfete = function (host, monta) {
   }
   </script>
 
-  <script defer src="js/config.js?v=20261106f"></script>
-  <script defer src="js/tracking.js?v=20261106f"></script>
-  <script defer src="js/offer.js?v=20261106f"></script>
-  <script defer src="js/checkout.js?v=20261106f"></script>
-  <script defer src="js/ui.js?v=20261106f"></script>
-  <script defer src="js/video.js?v=20261106f"></script>
+  <script defer src="js/config.js?v=20261106g"></script>
+  <script defer src="js/tracking.js?v=20261106g"></script>
+  <script defer src="js/offer.js?v=20261106g"></script>
+  <script defer src="js/checkout.js?v=20261106g"></script>
+  <script defer src="js/ui.js?v=20261106g"></script>
+  <script defer src="js/video.js?v=20261106g"></script>
 </head>
 <body>
 
@@ -255,15 +278,17 @@ window.bfConfete = function (host, monta) {
     </div>
     <p class="hero__sub"><strong>Acesso vitalício à plataforma completa</strong> da Solute RH. Você nunca mais vai precisar comprar outra ferramenta ou curso de RH.</p>
     <div class="hero__cta">
-      <div class="cta-pair"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="aluno" data-cta="hero-aluno">Já sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="nao-aluno" data-cta="hero-nao-aluno">Não sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
-      <p class="micro"><strong class="micro__hot">Só hoje, até 23h59</strong> · +24.000 alunos · Garantia de 7 dias</p>
+      <div class="cta-pair" data-fase="hoje"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="aluno" data-cta="hero-aluno">Já sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="nao-aluno" data-cta="hero-nao-aluno">Não sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+      <div class="cta-pair cta-pair--solo" data-fase="mes"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="black30" data-cta="hero-black30">Quero meu acesso com 30% OFF <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+      <p class="micro" data-fase="hoje"><strong class="micro__hot">Só hoje, até 23h59</strong> · +24.000 alunos · Garantia de 7 dias</p>
+      <p class="micro" data-fase="mes"><strong class="micro__hot">Black Friday: 30% OFF</strong> · +24.000 alunos · Garantia de 7 dias</p>
     </div>
   </div>
 </section>
 
 <div class="tapes" aria-hidden="true">
-  <div class="tape tape--dark"><div class="tape__track" data-tape><span class="o">BLACK DA SOLUTE</span> ✦ SÓ HOJE ✦ ACESSO VITALÍCIO ✦ PLATAFORMA COMPLETA ✦ </div></div>
-  <div class="tape tape--green"><div class="tape__track tape__track--rev" data-tape>BLACK FRIDAY ✦ ATÉ 40% OFF ✦ BLACK FRIDAY ✦ ATÉ 23H59 ✦ </div></div>
+  <div class="tape tape--dark"><div class="tape__track" data-tape><span data-fase="hoje"><span class="o">BLACK DA SOLUTE</span> ✦ SÓ HOJE ✦ ACESSO VITALÍCIO ✦ PLATAFORMA COMPLETA ✦ </span><span data-fase="mes"><span class="o">BLACK DA SOLUTE</span> ✦ 30% OFF ✦ ACESSO VITALÍCIO ✦ PLATAFORMA COMPLETA ✦ </span></div></div>
+  <div class="tape tape--green"><div class="tape__track tape__track--rev" data-tape><span data-fase="hoje">BLACK FRIDAY ✦ ATÉ 40% OFF ✦ BLACK FRIDAY ✦ ATÉ 23H59 ✦ </span><span data-fase="mes">BLACK FRIDAY ✦ 30% OFF ✦ BLACK FRIDAY ✦ O MÊS INTEIRO ✦ </span></div></div>
 </div>
 
 <!-- =======================================================================
@@ -446,7 +471,8 @@ window.bfConfete = function (host, monta) {
         <li><strong>+250</strong><span>Ferramentas práticas prontas para usar</span></li>
         <li><strong>R$ 0</strong><span>Pelos próximos treinamentos gravados e publicados</span></li>
       </ul>
-      <div class="cta-pair reveal"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="aluno" data-cta="vitalicio-aluno">Já sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="nao-aluno" data-cta="vitalicio-nao-aluno">Não sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+      <div class="cta-pair reveal" data-fase="hoje"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="aluno" data-cta="vitalicio-aluno">Já sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="nao-aluno" data-cta="vitalicio-nao-aluno">Não sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+      <div class="cta-pair cta-pair--solo reveal" data-fase="mes"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="black30" data-cta="vitalicio-black30">Quero meu acesso com 30% OFF <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
     </div>
     <div class="lifetime__media reveal">
       <p class="covers-badge"><span class="covers-badge__top">+20 cursos e</span><strong>+250</strong><span>ferramentas práticas</span></p>
@@ -522,7 +548,7 @@ window.bfConfete = function (host, monta) {
         <p class="anchor__from"><s>R$ 5.150</s> <span class="chip">por</span></p>
         <p class="anchor__big">R$ 1.997</p>
         <p class="anchor__text">Quem já orçou o Método sabe: esse é o preço, todos os dias do ano.</p>
-        <p class="anchor__punch">Mas hoje não é um dia qualquer.</p>
+        <p class="anchor__punch" data-fase="hoje">Mas hoje não é um dia qualquer.</p><p class="anchor__punch" data-fase="mes">Mas na Black Friday é diferente.</p>
       </div>
     </div>
   </div>
@@ -548,9 +574,10 @@ window.bfConfete = function (host, monta) {
      ======================================================================= -->
 <section class="section offer-section" id="oferta" aria-labelledby="oferta-title">
   <div class="container">
-    <p class="eyebrow eyebrow--center reveal">Black da Solute · Só hoje, das 7h às 23h59</p>
-    <h2 id="oferta-title" class="title title--center reveal">Escolha a <span class="hl">sua condição</span></h2>
-    <div class="offer offer--tiers">
+    <p class="eyebrow eyebrow--center reveal" data-fase="hoje">Black da Solute · Só hoje, das 7h às 23h59</p>
+    <p class="eyebrow eyebrow--center reveal" data-fase="mes">Black da Solute · 30% OFF o mês inteiro</p>
+    <h2 id="oferta-title" class="title title--center reveal"><span data-fase="hoje">Escolha a <span class="hl">sua condição</span></span><span data-fase="mes">Sua condição de <span class="hl">Black Friday</span></span></h2>
+    <div class="offer offer--tiers" data-fase="hoje">
       <article class="tier tier--novo reveal" data-tier="nao-aluno">
         <p class="tier__who">Para quem entra agora</p>
         <p class="tier__from"><s data-price-list>R$ 1.997</s> <span class="tier__off" data-tier-off>35% OFF</span></p>
@@ -569,6 +596,17 @@ window.bfConfete = function (host, monta) {
         <a class="btn btn--cta btn--xl btn--block" href="#oferta" data-checkout="aluno" data-cta="oferta-aluno">Já sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
       </article>
     </div>
+    <div class="offer offer--tiers offer--single" data-fase="mes">
+      <article class="tier tier--novo reveal">
+        <p class="tier__flag">Black Friday</p>
+        <p class="tier__who">Para alunos e novos alunos</p>
+        <p class="tier__from"><s data-price-list>R$ 1.997</s> <span class="tier__off" data-discount>30% OFF</span></p>
+        <p class="tier__inst"><span data-price-installments></span> <span data-price-installment-value>R$ 1.397,90</span></p>
+        <p class="tier__cash price__cash">ou <strong data-price-cash>R$ 1.397,90</strong> à vista</p>
+        <p class="tier__note">Em até 12x no cartão, ou no Pix e PayPal. Acesso vitalício à plataforma completa.</p>
+        <a class="btn btn--cta btn--xl btn--block" href="#oferta" data-checkout="black30" data-cta="oferta-black30">Quero meu acesso com 30% OFF <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      </article>
+    </div>
     <ul class="offer__trust reveal">
       <li><svg aria-hidden="true"><use href="#i-lock"/></svg>Pagamento seguro via Hotmart</li>
       <li><svg aria-hidden="true"><use href="#i-shield"/></svg>Garantia de 7 dias</li>
@@ -581,7 +619,7 @@ window.bfConfete = function (host, monta) {
 <!-- =======================================================================
      COMO FUNCIONA
      ======================================================================= -->
-<section class="section section--alt" id="como-funciona" aria-labelledby="como-title">
+<section class="section section--alt" id="como-funciona" data-fase="hoje" aria-labelledby="como-title">
   <div class="container">
     <h2 id="como-title" class="title title--tight reveal">Como <span class="hl">funciona</span></h2>
     <p class="section-lead reveal">Hoje, quinta 05/11, o link caiu nos 16 grupos ao mesmo tempo.</p>
@@ -602,7 +640,7 @@ window.bfConfete = function (host, monta) {
     <ul class="cards cards--2">
       <li class="card reveal"><h3>“Não vou ter tempo de assistir tudo”</h3><p>O acesso é vitalício e tem aplicativo. Você estuda no seu ritmo, sem prazo para terminar.</p></li>
       <li class="card reveal"><h3>“Já fiz curso e nada mudou na prática”</h3><p>Aqui é método aplicado em mais de 1.000 empresas, com +250 ferramentas prontas e mentoria mensal.</p></li>
-      <li class="card reveal"><h3>“Agora não cabe no bolso”</h3><p>Em 12x, dá cerca de R$ 4 por dia. Por um acesso que é seu para sempre.</p></li>
+      <li class="card reveal"><h3>“Agora não cabe no bolso”</h3><p data-fase="hoje">Em 12x, dá cerca de R$ 4 por dia. Por um acesso que é seu para sempre.</p><p data-fase="mes">Em 12x, dá menos de R$ 5 por dia. Por um acesso que é seu para sempre.</p></li>
       <li class="card reveal"><h3>“E se eu não gostar?”</h3><p>Você tem 7 dias de garantia. Entra, testa tudo e, se não for para você, devolvemos 100% do valor.</p></li>
     </ul>
   </div>
@@ -639,9 +677,12 @@ window.bfConfete = function (host, monta) {
       </ul>
       <div class="recap__card reveal">
         <p class="recap__from">Valor do conteúdo: <s>R$ 5.150</s></p>
-        <p class="recap__big">Hoje, a partir de <span class="recap__price">12x de R$ 127,60</span></p>
-        <p class="recap__small">Aluno: 40% OFF · Novo aluno: 35% OFF · Pague uma vez, use para sempre</p>
-        <div class="cta-pair"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="aluno" data-cta="recap-aluno">Já sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="nao-aluno" data-cta="recap-nao-aluno">Não sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+        <p class="recap__big" data-fase="hoje">Hoje, a partir de <span class="recap__price">12x de R$ 127,60</span></p>
+        <p class="recap__small" data-fase="hoje">Aluno: 40% OFF · Novo aluno: 35% OFF · Pague uma vez, use para sempre</p>
+        <p class="recap__big" data-fase="mes">Na Black Friday, <span class="recap__price">30% OFF</span></p>
+        <p class="recap__small" data-fase="mes">R$ 1.397,90 à vista ou em até 12x · Pague uma vez, use para sempre</p>
+        <div class="cta-pair" data-fase="hoje"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="aluno" data-cta="recap-aluno">Já sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="nao-aluno" data-cta="recap-nao-aluno">Não sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+      <div class="cta-pair cta-pair--solo" data-fase="mes"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="black30" data-cta="recap-black30">Quero meu acesso com 30% OFF <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
       </div>
     </div>
   </div>
@@ -704,11 +745,15 @@ window.bfConfete = function (host, monta) {
 <section class="final" aria-labelledby="final-title">
   <div class="container final__inner reveal">
     <img class="final__seal" src="img/selo-bf-560.webp?v=1" srcset="img/selo-bf-320.webp?v=1 320w, img/selo-bf-560.webp?v=1 560w" sizes="(min-width: 760px) 300px, 220px" alt="Black Friday" width="560" height="306" loading="lazy" decoding="async">
-    <p class="eyebrow eyebrow--center">Black da Solute · Hoje, 05/11</p>
-    <h2 id="final-title" class="final__title">Só até <span class="hl">23h59 de hoje</span></h2>
-    <p class="final__price">Aluno: 40% OFF · Novo aluno: 35% OFF · Das 7h às 23h59</p>
-    <div class="cta-pair"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="aluno" data-cta="final-aluno">Já sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="nao-aluno" data-cta="final-nao-aluno">Não sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
-    <p class="final__sub final__sub--after">Milhares de pessoas receberam o mesmo link. Garanta a sua condição o quanto antes.</p>
+    <p class="eyebrow eyebrow--center" data-fase="hoje">Black da Solute · Hoje, 05/11</p>
+    <p class="eyebrow eyebrow--center" data-fase="mes">Black da Solute · O mês inteiro</p>
+    <h2 id="final-title" class="final__title"><span data-fase="hoje">Só até <span class="hl">23h59 de hoje</span></span><span data-fase="mes">30% OFF <span class="hl">no acesso vitalício</span></span></h2>
+    <p class="final__price" data-fase="hoje">Aluno: 40% OFF · Novo aluno: 35% OFF · Das 7h às 23h59</p>
+    <p class="final__price" data-fase="mes">Para alunos e novos alunos · Acesso vitalício · Garantia de 7 dias</p>
+    <div class="cta-pair" data-fase="hoje"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="aluno" data-cta="final-aluno">Já sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="nao-aluno" data-cta="final-nao-aluno">Não sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+      <div class="cta-pair cta-pair--solo" data-fase="mes"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="black30" data-cta="final-black30">Quero meu acesso com 30% OFF <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+    <p class="final__sub final__sub--after" data-fase="hoje">Milhares de pessoas receberam o mesmo link. Garanta a sua condição o quanto antes.</p>
+    <p class="final__sub final__sub--after" data-fase="mes">Pague uma vez e tenha a plataforma completa da Solute RH para sempre.</p>
   </div>
 </section>
 
@@ -727,7 +772,8 @@ window.bfConfete = function (host, monta) {
 
 <!-- CTA fixo: aparece a partir do Método (módulos) -->
 <div class="sticky-cta" data-sticky-cta aria-hidden="true">
-  <div class="cta-pair cta-pair--sticky"><a class="btn btn--cta" href="#oferta" data-checkout="aluno" data-cta="sticky-aluno" tabindex="-1">Sou aluno</a><a class="btn btn--cta" href="#oferta" data-checkout="nao-aluno" data-cta="sticky-nao-aluno" tabindex="-1">Não sou aluno</a></div>
+  <div class="cta-pair cta-pair--sticky" data-fase="hoje"><a class="btn btn--cta" href="#oferta" data-checkout="aluno" data-cta="sticky-aluno" tabindex="-1">Sou aluno</a><a class="btn btn--cta" href="#oferta" data-checkout="nao-aluno" data-cta="sticky-nao-aluno" tabindex="-1">Não sou aluno</a></div>
+  <div class="cta-pair cta-pair--sticky" data-fase="mes"><a class="btn btn--cta" href="#oferta" data-checkout="black30" data-cta="sticky-black30" tabindex="-1">Quero 30% OFF</a></div>
 </div>
 
 <!-- Formulário rápido antes do checkout -->

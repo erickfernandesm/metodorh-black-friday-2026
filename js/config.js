@@ -150,3 +150,27 @@ window.RH_CONFIG = {
     utmify: true,
   },
 };
+
+/* --------------------------------------------------------------------------
+   FASE "MÊS" (a partir de 06/11/2026 00h00, horário de Brasília)
+   A data da virada fica no <head> do index.html (INICIO_MES).
+   Público único, 30% OFF o mês inteiro, sem contador e sem "só hoje".
+   -------------------------------------------------------------------------- */
+if (window.RH_FASE && window.RH_FASE.mes) {
+  (function (c) {
+    c.campaign.endsAt = null;          // sem contador
+    c.campaign.urgencyTag = null;      // sem "Só hoje"
+    c.offer.tiers = null;              // um preço só, para todos
+    c.offer.listPrice = 1997;
+    c.offer.cashPrice = 1397.90;       // 30% OFF sobre R$ 1.997
+    // [PENDENTE] valor da parcela em 12x na Hotmart. Enquanto for null, a
+    // página mostra "R$ 1.397,90 à vista" e "em até 12x no cartão".
+    c.offer.installments = null;
+    c.offer.installmentValue = null;
+    // [CONFIRMADO] checkout da Black do mês (cupom BLACK30)
+    c.checkout.url = 'https://pay.hotmart.com/N103364259K?bid=1793911664774&off=vounmytr&offDiscount=BLACK30';
+    c.checkout.urls = {};
+    // lead do formulário: webhook padrão (checkout.leadCapture.webhookUrl)
+    c.checkout.leadCapture.webhookUrls = {};
+  })(window.RH_CONFIG);
+}
