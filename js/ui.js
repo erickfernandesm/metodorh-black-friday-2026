@@ -121,3 +121,40 @@
   /* Ano do rodapé */
   each('[data-year]', function (el) { el.textContent = new Date().getFullYear(); });
 })();
+
+/* Oferta: quando metade dos cartões de preço entra na tela (uma vez só), eles
+   balançam e saem confetes (mesma animação da página da Caixa de Ferramentas).
+   Desktop: confetes saem de trás dos cartões. Celular: caem do topo da tela,
+   porque saindo de trás dos cartões iriam para fora da tela. */
+(function () {
+  'use strict';
+  var sec = document.getElementById('oferta');
+  var grid = sec && sec.querySelector('.offer--tiers');
+  if (!grid || !window.bfConfete || !('IntersectionObserver' in window)) return;
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var io = new IntersectionObserver(function (es) {
+    if (!es[0].isIntersecting) return;
+    io.disconnect();
+    Array.prototype.forEach.call(grid.querySelectorAll('.tier'), function (t, i) {
+      setTimeout(function () { t.classList.add('bf-sacode'); }, i * 160);
+    });
+    if (innerWidth < 760) {
+      window.bfConfete(null, function (W, H, peca, n) {
+        for (var i = 0; i < n; i++)
+          peca(Math.random() * W, -10 - Math.random() * H * 1.3, (Math.random() - .5) * 1.2, 1 + Math.random() * 2, i);
+      });
+      return;
+    }
+    var rs = sec.getBoundingClientRect(), rc = grid.getBoundingClientRect();
+    var x0 = rc.left - rs.left, y0 = rc.top - rs.top, cw = rc.width, ch = rc.height;
+    var cx = x0 + cw / 2, cy = y0 + ch / 2;
+    window.bfConfete(sec, function (W, H, peca, n) {
+      for (var i = 0; i < n * .9; i++) {
+        var x = x0 + Math.random() * cw, y = y0 + Math.random() * ch;
+        var dx = x - cx, dy = y - cy, d = Math.sqrt(dx * dx + dy * dy) || 1, v = 7 + Math.random() * 9;
+        peca(x, y, dx / d * v * 1.3, dy / d * v - 7, i);
+      }
+    });
+  }, { threshold: .5 });
+  io.observe(grid);
+})();

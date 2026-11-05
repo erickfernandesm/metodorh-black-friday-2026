@@ -1734,3 +1734,19 @@ html.bf-intro-saindo .hero__seal { animation: bfSeloEntra .7s cubic-bezier(.34, 
     background: linear-gradient(180deg, rgba(0, 0, 0, .25) 0%, rgba(0, 0, 0, .72) 16%, var(--bg) 36%);
   }
 }
+
+/* Oferta: confetes saem de trás dos cartões (canvas atrás do conteúdo) e os
+   cartões dão um "susto": pulo, chacoalhada e brilho que apaga devagar */
+#oferta { overflow: hidden; }
+#oferta > .container { position: relative; z-index: 1; }
+.bf-confete--local { pointer-events: none; top: 0; left: 0; }
+.tier.bf-sacode { animation: bfSacode 1s cubic-bezier(.36, .07, .19, .97) both; }
+@keyframes bfSacode {
+  0%   { transform: none; filter: none; }
+  12%  { transform: scale(1.06) rotate(-2.5deg); filter: drop-shadow(0 0 40px var(--acc)); }
+  24%  { transform: scale(1.05) rotate(2.5deg); }
+  36%  { transform: scale(1.04) rotate(-1.8deg); }
+  48%  { transform: scale(1.03) rotate(1.2deg); filter: drop-shadow(0 0 24px var(--acc)); }
+  62%  { transform: scale(1.01) rotate(-.6deg); }
+  100% { transform: none; filter: none; }
+}
