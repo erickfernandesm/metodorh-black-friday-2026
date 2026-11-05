@@ -47,12 +47,11 @@ window.RH_CONFIG = {
     priceConfirmed: true,
     listPrice: 1997,               // preço "De" (preço cheio)
     cashPrice: 1198.20,            // menor preço (referência); os preços de cada público ficam em tiers
+    // [CONFIRMADO] Dobra de preço da oferta: "Alunos pagam" / "Novos alunos pagam".
     tiers: {
-      'aluno':     { label: 'Alunos',     cashPrice: 1198.20 },
-      'nao-aluno': { label: 'Não alunos', cashPrice: 1298.05 },
+      'aluno':     { label: 'Alunos',       cashPrice: 1198.20, installments: 12, installmentValue: 127.60 },
+      'nao-aluno': { label: 'Novos alunos', cashPrice: 1298.05, installments: 12, installmentValue: 138.23 },
     },
-    // A página NÃO mostra valores em reais: só o % OFF de cada público
-    // (calculado com listPrice e o cashPrice de cada um). Os valores aparecem no checkout.
     // Com promoção ativa, o "% OFF" é calculado a partir de listPrice e cashPrice.
 
     installments: null,            // parcelas variam por público: ver tierNote

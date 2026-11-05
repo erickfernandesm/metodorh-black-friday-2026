@@ -1319,3 +1319,31 @@ body.has-sticky-cta .site-footer { padding-bottom: calc(110px + env(safe-area-in
    (só corta na lateral, para não gerar rolagem horizontal) */
 .tapes--footer { overflow: visible; overflow-x: clip; overflow-y: visible; height: 72px; margin-top: 24px; }
 @media (min-width: 760px) { .tapes--footer { height: 84px; } }
+
+/* Dobra de preço: "Alunos pagam" / "Novos alunos pagam" */
+.price-tiers { margin: 16px 0 4px; }
+.price-tier { padding: 16px 12px; gap: 6px; }
+.price-tier__who { font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-weight: 700; font-size: 1rem; color: var(--text); }
+.price-tier__value { font-size: clamp(2rem, 1.4rem + 2vw, 2.6rem); }
+.price-tier__note { font-size: .95rem; }
+.price-tier__note b { color: var(--text); }
+@media (max-width: 519px) { .price-tiers { grid-template-columns: 1fr; } }
+
+/* Preço mais legível: fonte sem condensar, números espaçados, "R$" menor */
+.price-tier__value {
+  font-family: var(--font-body); font-weight: 700;
+  font-size: clamp(1.9rem, 1.5rem + 1.4vw, 2.35rem);
+  letter-spacing: .01em; line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  margin: 2px 0;
+}
+.price-tier__cur { font-size: .55em; font-weight: 600; color: var(--muted); vertical-align: .35em; margin-right: 2px; }
+.price-tier__who { font-size: 1.02rem; }
+.price-tier__note { font-size: 1rem; letter-spacing: .01em; }
+.price-tier { gap: 8px; padding: 18px 12px; }
+
+/* Preço mais leve e sempre numa linha só */
+.price-tier__value { font-weight: 600; white-space: nowrap; font-size: clamp(1.75rem, 1.4rem + 1.1vw, 2.1rem); letter-spacing: 0; }
+.price-tier__cur { font-weight: 500; }
+.price-tier__who { font-weight: 600; }
+.price-tier__note b { font-weight: 600; }

@@ -178,8 +178,17 @@
       var pct = Math.round((1 - t.cashPrice / offer.listPrice) * 100);
       t.pct = pct;
       pcts.push(pct);
-      // A página mostra só o % de desconto, sem valores em reais
-      each('[data-tier="' + k + '"] [data-tier-off]', function (el) { el.textContent = pct + '% OFF'; });
+      // Dobra de preço: rótulo, valor à vista e parcelado de cada público
+      var sel = '[data-tier="' + k + '"] ';
+      each(sel + '[data-tier-off]', function (el) { el.textContent = pct + '% OFF'; });
+      if (t.label) setText(sel + '[data-tier-label]', t.label);
+      // "R$" menor e separado do número, para facilitar a leitura
+      var num = brl.format(t.cashPrice).replace(/^R\$\s*/, '');
+      each(sel + '[data-tier-price]', function (el) {
+        el.innerHTML = '<span class="price-tier__cur">R$</span> ' + num;
+      });
+      if (t.installments > 1 && t.installmentValue > 0) setText(sel + '[data-tier-inst]', t.installments + 'x de ' + brl.format(t.installmentValue));
+      else each(sel + '.price-tier__note', function (el) { el.hidden = true; });
     });
     var max = Math.max.apply(null, pcts);
     var min = Math.min.apply(null, pcts);
