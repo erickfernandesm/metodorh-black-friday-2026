@@ -24,12 +24,112 @@
   <link rel="apple-touch-icon" href="img/favicon-180.png">
 
   <link rel="preload" href="fonts/anton-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preconnect" href="https://www.youtube-nocookie.com">
+  <link rel="preconnect" href="https://i.ytimg.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="css/styles.css?v=20261105">
+  <link rel="stylesheet" href="css/styles.css?v=20261106b">
 
   <script>document.documentElement.classList.add('js');</script>
+
+  <!-- REVELAÇÃO DA BLACK (mesma abertura da página da Caixa de Ferramentas):
+       logo grande no centro, balanço, confetes e some. Uma vez por sessão,
+       nunca para quem pediu menos movimento. Toque/clique pula. Fica no
+       <head> para rodar antes das fontes terminarem de baixar. -->
+  <script>
+/* Motor de confetes, sem biblioteca. Usado na abertura e na oferta.
+   host: elemento onde o canvas entra (ocupa ele inteiro); null = tela toda.
+   monta(W, H, peca, n): cria as peças com peca(x, y, vx, vy, k).
+   O canvas se apaga sozinho quando a última peça sai por baixo. */
+window.bfConfete = function (host, monta) {
+  var c = document.createElement('canvas');
+  var ctx = c.getContext && c.getContext('2d');
+  if (!ctx) return;
+  c.className = host ? 'bf-confete bf-confete--local' : 'bf-confete';
+  (host || document.body || document.documentElement).appendChild(c);
+  var dpr = Math.min(window.devicePixelRatio || 1, 2), W, H;
+  function mede() {
+    W = host ? host.clientWidth : innerWidth; H = host ? host.clientHeight : innerHeight;
+    c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  mede(); addEventListener('resize', mede);
+  var cores = ['#f7931e', '#ffb347', '#ffd166', '#ffffff', '#e8e8e8', '#ff7a00', '#3a46ff'];
+  var ps = [];
+  monta(W, H, function (x, y, vx, vy, k) {
+    ps.push({ x: x, y: y, vx: vx, vy: vy, s: 6 + Math.random() * 7, r: Math.random() * 6.3,
+      vr: (Math.random() - .5) * .3, f: Math.random() * 6.3, c: cores[k % cores.length], q: Math.random() < .3 });
+  }, W < 600 ? 120 : 200);
+  var t0 = performance.now();
+  (function quadro(t) {
+    ctx.clearRect(0, 0, W, H);
+    var vivos = 0;
+    for (var k = 0; k < ps.length; k++) {
+      var p = ps[k];
+      if (p.y > H + 30) continue;
+      vivos++;
+      p.vx *= .97; p.vy = Math.min(p.vy * .975 + .16, 3.2);   /* queda limitada: flutua */
+      p.x += p.vx + Math.sin(p.f) * .9; p.y += p.vy; p.r += p.vr; p.f += .09;
+      if (p.y < -20) continue;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.scale(1, Math.cos(p.f));
+      ctx.fillStyle = p.c;
+      if (p.q) { ctx.beginPath(); ctx.arc(0, 0, p.s * .45, 0, 6.3); ctx.fill(); }
+      else ctx.fillRect(-p.s / 2, -p.s * .3, p.s, p.s * .6);
+      ctx.restore();
+    }
+    if (vivos && t - t0 < 9000) requestAnimationFrame(quadro);
+    else { removeEventListener('resize', mede); if (c.parentNode) c.parentNode.removeChild(c); }
+  })(t0);
+};
+(function () {
+  var h = document.documentElement, visto = false;
+  try { visto = sessionStorage.getItem('bf_abertura') === '1'; } catch (e) {}
+  var calmo = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (visto || calmo) return;
+  h.classList.add('bf-intro-on', 'bf-intro-lock');
+  try { sessionStorage.setItem('bf_abertura', '1'); } catch (e) {}
+
+  /* Tudo aqui no <head> de propósito: um script no corpo espera o CSS das
+     fontes do Google terminar de baixar antes de rodar, e em rede lenta de
+     celular isso segurava a abertura na tela. Os relógios começam agora. */
+  var fechou = false;
+  function fecha() {
+    if (fechou) return; fechou = true;
+    var intro = document.querySelector('.bf-intro');
+    if (!intro) { h.classList.remove('bf-intro-lock', 'bf-intro-on'); document.dispatchEvent(new Event('bf:intro-fim')); return; }
+    intro.classList.add('is-out');
+    document.dispatchEvent(new Event('bf:intro-fim'));
+    h.classList.add('bf-intro-saindo');
+    /* a rolagem só volta depois do fade: soltar antes fazia a barra de
+       rolagem reaparecer no meio da animação e a página dar um tranco */
+    setTimeout(function () {
+      if (intro.parentNode) intro.parentNode.removeChild(intro);
+      h.classList.remove('bf-intro-lock', 'bf-intro-on');
+    }, 820);
+  }
+  setTimeout(fecha, 2800);
+  /* toque ou clique em qualquer lugar da abertura pula */
+  function pula(e) { if (!fechou && e.target.closest && e.target.closest('.bf-intro')) fecha(); }
+  document.addEventListener('click', pula, true);
+  document.addEventListener('touchstart', pula, { capture: true, passive: true });
+
+  /* confetes da abertura: explosão a partir da logo e uma chuva que vai
+     chegando de cima, então eles continuam caindo sobre a página depois que
+     a abertura some */
+  setTimeout(function () {
+    window.bfConfete(null, function (W, H, peca, n) {
+      var i, a, v;
+      for (i = 0; i < n; i++) {
+        a = Math.random() * Math.PI * 2; v = 4 + Math.random() * 10;
+        peca(W / 2, H * .46, Math.cos(a) * v, Math.sin(a) * v - 5, i);
+      }
+      for (i = 0; i < n; i++)
+        peca(Math.random() * W, -10 - Math.random() * H * 1.6, (Math.random() - .5) * 1.5, 1 + Math.random() * 2, i + 3);
+    });
+  }, 420);
+})();
+  </script>
+  <link rel="preload" as="image" href="img/selo-bf-880.webp?v=1" type="image/webp">
 
   <script type="application/ld+json">
   {
@@ -43,11 +143,12 @@
   }
   </script>
 
-  <script defer src="js/config.js?v=20261105"></script>
-  <script defer src="js/tracking.js?v=20261105"></script>
-  <script defer src="js/offer.js?v=20261105"></script>
-  <script defer src="js/checkout.js?v=20261105"></script>
-  <script defer src="js/ui.js?v=20261105"></script>
+  <script defer src="js/config.js?v=20261106b"></script>
+  <script defer src="js/tracking.js?v=20261106b"></script>
+  <script defer src="js/offer.js?v=20261106b"></script>
+  <script defer src="js/checkout.js?v=20261106b"></script>
+  <script defer src="js/ui.js?v=20261106b"></script>
+  <script defer src="js/video.js?v=20261106b"></script>
 </head>
 <body>
 
@@ -64,8 +165,17 @@
   <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
   <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7.5 3v5.5c0 4.5-3.2 8.2-7.5 9.5-4.3-1.3-7.5-5-7.5-9.5V6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.8 12l2.2 2.2 4.3-4.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-gift" viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="11" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M12 9v11M12 9c-1-3-5-4-5-1.5S12 9 12 9zm0 0c1-3 5-4 5-1.5S12 9 12 9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
 </svg>
+
+<!-- REVELAÇÃO DA BLACK: camada da abertura (ver script no <head>) -->
+<div class="bf-intro" aria-hidden="true">
+  <div class="bf-intro__in">
+    <img class="bf-intro__logo" src="img/selo-bf-880.webp?v=1" alt="" width="880" height="481">
+    <span class="bf-intro__sub">Black da Solute</span>
+  </div>
+</div>
 
 <a class="skip-link" href="#conteudo-principal">Pular para o conteúdo</a>
 
@@ -83,7 +193,7 @@
 <main id="conteudo-principal">
 
 <!-- =======================================================================
-     HERO — mural animado com as ferramentas da plataforma
+     HERO — mural animado + vídeo do YouTube (js/config.js → hero.youtube)
      ======================================================================= -->
 <section class="hero" aria-labelledby="hero-title">
   <div class="wall" aria-hidden="true" data-wall>
@@ -133,76 +243,64 @@
 
   <div class="container hero__inner">
     <p class="hero__tags"><span class="tag-off" data-discount>Até 40% OFF</span></p>
-    <h1 id="hero-title" class="hero__title">Saia do operacional e vire o RH que <span class="hl">participa das decisões</span></h1>
+    <h1 id="hero-title" class="hero__title">Saia do operacional <span class="hero__line">e vire o RH que</span> <span class="hl">participa das decisões</span></h1>
+    <div class="hero__video" data-hero-video hidden>
+      <div class="hero__frame" data-hero-frame></div>
+      <button type="button" class="hero__unmute" data-hero-unmute aria-label="Ativar o som do vídeo">
+        <span class="hero__unmute-pill"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18 6.5a7.8 7.8 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Clique para ativar o som</span></span>
+        <svg class="hero__hint" aria-hidden="true" viewBox="0 0 32 32"><path d="M7 3.5v21.2l5.3-5 3.6 8.3 3.8-1.6-3.6-8.2 7.3-.3z" fill="#fff" stroke="#000" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
     <p class="hero__sub"><strong>Acesso vitalício à plataforma completa</strong> da Solute RH. Você nunca mais vai precisar comprar outra ferramenta ou curso de RH.</p>
     <div class="hero__cta">
       <div class="cta-pair"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="aluno" data-cta="hero-aluno">Já sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="nao-aluno" data-cta="hero-nao-aluno">Não sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
-      <p class="micro">+24.000 alunos · Garantia de 7 dias · Acesso vitalício</p>
+      <p class="micro"><strong class="micro__hot">Só hoje, até 23h59</strong> · +24.000 alunos · Garantia de 7 dias</p>
     </div>
   </div>
 </section>
 
 <div class="tapes" aria-hidden="true">
-  <div class="tape tape--dark"><div class="tape__track" data-tape><span class="o">ACESSO VITALÍCIO</span> ✦ PLATAFORMA COMPLETA ✦ TREINAMENTOS FUTUROS INCLUSOS ✦ </div></div>
-  <div class="tape tape--green"><div class="tape__track tape__track--rev" data-tape>BLACK FRIDAY ✦ ACESSO VITALÍCIO ✦ BLACK FRIDAY ✦ ACESSO VITALÍCIO ✦ </div></div>
+  <div class="tape tape--dark"><div class="tape__track" data-tape><span class="o">BLACK DA SOLUTE</span> ✦ SÓ HOJE ✦ ACESSO VITALÍCIO ✦ PLATAFORMA COMPLETA ✦ </div></div>
+  <div class="tape tape--green"><div class="tape__track tape__track--rev" data-tape>BLACK FRIDAY ✦ ATÉ 40% OFF ✦ BLACK FRIDAY ✦ ATÉ 23H59 ✦ </div></div>
 </div>
 
 <!-- =======================================================================
-     DEPOIMENTOS (trechos dos depoimentos publicados no site oficial)
+     HISTÓRIA (pitch: "Há 16 anos..." + "Foi o método")
      ======================================================================= -->
-<section class="section section--light" id="depoimentos" aria-labelledby="dep-title">
-  <div class="container">
-    <h2 id="dep-title" class="title reveal">Quem já <span class="hl">fez</span></h2>
-    <div class="quotes">
-      <figure class="quote reveal">
-        <blockquote><p>“O método da Solute não é historinha, é transformação real. Com as ferramentas certas e o direcionamento da Rose, <mark>implantei um RH do zero, mudei a cultura</mark> e me tornei uma profissional generalista preparada para ir além do DP e atuar estrategicamente no RH.”</p></blockquote>
-        <figcaption>Samantha</figcaption>
-      </figure>
-      <figure class="quote reveal">
-        <blockquote><p>“A base do meu conhecimento veio da Solute. O curso foi crucial para eu entender o que precisava melhorar e <mark>desenvolver o olhar estratégico de uma recrutadora, mesmo vindo de outra área</mark>. Ele impactou em tudo, transformando minha forma de atuar no RH.”</p></blockquote>
-        <figcaption>Samara</figcaption>
-      </figure>
-      <figure class="quote reveal">
-        <blockquote><p>“Ser um RH estratégico é entender que nosso papel vai além de cuidar de pessoas; é <mark>trazer resultados mensuráveis, alinhar indicadores</mark>, implementar melhorias e conectar as necessidades do negócio com as soluções de gestão. A transformação começa quando aprendemos a unir dados, ferramentas e visão estratégica para impactar de verdade.”</p></blockquote>
-        <figcaption>Thais</figcaption>
-      </figure>
+<section class="section story" id="historia" aria-labelledby="historia-title">
+  <div class="container story__inner">
+    <p class="eyebrow reveal">A Black que eu esperei o ano inteiro para fazer</p>
+    <div class="story__grid">
+      <article class="story__col story__col--antes reveal">
+        <p class="story__tag">Antes</p>
+        <h2 id="historia-title" class="story__title">Há 16 anos eu entrei numa sala de RH <span class="hl">pela primeira vez</span></h2>
+        <p class="story__lead">Ninguém me chamava para decidir nada. Eu carimbava papel, apagava incêndio e ouvia que RH era custo.</p>
+      </article>
+      <article class="story__col story__col--depois reveal">
+        <p class="story__tag">Depois</p>
+        <p class="story__title">O que mudou não foi o cargo. <span class="hl">Foi o método.</span></p>
+        <p class="story__lead">Quando eu aprendi a ligar gente a resultado, a diretoria passou a me ouvir. Hoje, esse mesmo caminho está no Método RH Estratégico.</p>
+      </article>
     </div>
-  </div>
-</section>
-
-<!-- =======================================================================
-     PLATAFORMA COMPLETA + ACESSO VITALÍCIO
-     ======================================================================= -->
-<section class="section lifetime" id="vitalicio" aria-labelledby="vit-title">
-  <div class="container lifetime__inner">
-    <div class="lifetime__copy">
-      <p class="hero__tags reveal"><span class="tag-off" data-discount>Até 40% OFF</span></p>
-      <h2 id="vit-title" class="title reveal">Nunca mais compre <span class="hl">uma ferramenta ou curso de RH</span></h2>
-      <p class="lifetime__lead reveal">Na Black Friday, você leva a <strong>maior plataforma de RH do Brasil</strong> completa, com <strong>acesso vitalício</strong>. Pague uma vez e tenha todas as ferramentas e cursos para sempre, <strong>inclusive os próximos que forem gravados</strong>.</p>
-      <ul class="lifetime__points">
-        <li class="reveal"><span class="lifetime__icon">&infin;</span><div><strong>Acesso vitalício</strong><p>Sem mensalidade e sem prazo para terminar.</p></div></li>
-        <li class="reveal"><span class="lifetime__icon"><svg aria-hidden="true"><use href="#i-play"/></svg></span><div><strong>Plataforma completa</strong><p>O Método RH Estratégico, +20 cursos e +250 ferramentas práticas da Solute RH.</p></div></li>
-        <li class="reveal"><span class="lifetime__icon"><svg aria-hidden="true"><use href="#i-gift"/></svg></span><div><strong>Treinamentos e ferramentas futuras inclusos</strong><p>Tenha acesso aos novos treinamentos e ferramentas que forem lançados na plataforma, sem pagar nada a mais.</p></div></li>
-      </ul>
-      <div class="cta-pair reveal"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="aluno" data-cta="vitalicio-aluno">Já sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="nao-aluno" data-cta="vitalicio-nao-aluno">Não sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
-    </div>
-    <div class="lifetime__media reveal">
-      <p class="covers-badge"><span class="covers-badge__top">+20 cursos e</span><strong>+250</strong><span>ferramentas práticas</span></p>
-    <div class="lifetime__covers" role="img" aria-label="Algumas das ferramentas inclusas na plataforma"><div class="lifetime__track" data-covers-track><img src="img/cursos/22-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/1-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/18-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/9-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/2-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/16-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/5-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/12-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/7-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/19-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/13-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/6-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/21-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/3-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/17-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/10-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/14-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/4-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/11-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/20-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/8-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/15-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"></div></div>
-    </div>
+    <ul class="story__nums reveal">
+      <li><strong>+16</strong><span>anos em RH</span></li>
+      <li><strong>+1.000</strong><span>empresas atendidas</span></li>
+      <li><strong>+24 mil</strong><span>alunos formados</span></li>
+      <li class="story__nums-sign"><span>Rosemeire Moreira</span><small>Criadora do Método · Solute RH</small></li>
+    </ul>
   </div>
 </section>
 
 <!-- =======================================================================
      IDENTIFICAÇÃO
      ======================================================================= -->
-<section class="section" id="identificacao" aria-labelledby="ident-title">
+<section class="section section--alt" id="identificacao" aria-labelledby="ident-title">
   <div class="container">
     <h2 id="ident-title" class="title reveal">Você se <span class="hl">identifica?</span></h2>
     <ul class="pains">
       <li class="reveal">“Faço de tudo, mas ninguém me enxerga como estratégico.”</li>
       <li class="reveal">“Tenho os dados, mas não sei mostrar resultado para a diretoria.”</li>
-      <li class="reveal">“Não tenho segurança para influenciar líderes ou propor mudanças.”</li>
+      <li class="reveal">“Não tenho segurança para influenciar líderes e propor mudanças.”</li>
       <li class="reveal">“Será que vou fazer as mesmas tarefas daqui a dois anos?”</li>
     </ul>
     <p class="bridge reveal">Não é falta de competência. É falta de <strong>método</strong>.</p>
@@ -210,7 +308,17 @@
 </section>
 
 <!-- =======================================================================
-     MÓDULOS (a partir daqui o CTA fixo aparece)
+     FAIXA LARANJA (pitch: "Ensina o que dá certo de verdade")
+     ======================================================================= -->
+<section class="band" aria-labelledby="band-title">
+  <div class="container">
+    <h2 id="band-title" class="band__title reveal">Aqui a gente não ensina o que acha que dá certo. <span>Ensina o que dá certo de verdade.</span></h2>
+    <p class="band__text reveal">Tudo que está no Método é aplicado todos os dias na consultoria da Solute RH, em empresas de todos os portes.</p>
+  </div>
+</section>
+
+<!-- =======================================================================
+     MÉTODO: 5 MÓDULOS + PLATAFORMA (a partir daqui o CTA fixo aparece)
      ======================================================================= -->
 <div class="seal-divider" aria-hidden="true">
   <img class="reveal" src="img/selo-bf-320.webp?v=1" srcset="img/selo-bf-320.webp?v=1 320w, img/selo-bf-560.webp?v=1 560w" sizes="(min-width: 760px) 260px, 190px" alt="" width="320" height="175" loading="lazy" decoding="async">
@@ -218,11 +326,8 @@
 
 <section class="section section--alt" id="modulos" aria-labelledby="modulos-title" data-sticky-start>
   <div class="container">
-    <h2 id="modulos-title" class="title reveal">Tudo que está <span class="hl">incluso</span></h2>
-    <div class="leva reveal">
-      <p class="leva__head"><strong class="leva__inf">&infin;</strong><span><b>Acesso vitalício</b> à maior plataforma do Brasil em Gestão de Pessoas. Pague uma única vez e tenha acesso a todos os treinamentos e ferramentas. <strong>Para sempre.</strong></span></p>
-    </div>
-    <h3 class="subtitle reveal">Os <span class="hl">5 módulos</span></h3>
+    <h2 id="modulos-title" class="title title--tight reveal">O Método <span class="hl">RH Estratégico</span></h2>
+    <p class="section-lead reveal">5 módulos e mais de 50 horas de aula, do básico ao avançado.</p>
     <ol class="modules">
       <li class="module reveal">
         <img src="img/modulo-1-320.webp?v=2" srcset="img/modulo-1-320.webp?v=2 320w, img/modulo-1-600.webp?v=2 600w" sizes="(min-width: 1040px) 210px, (min-width: 640px) 30vw, 70vw" alt="" width="320" height="320" loading="lazy" decoding="async">
@@ -294,8 +399,8 @@
       </li>
     </ol>
     <div class="modules-dots" data-modules-dots aria-hidden="true"></div>
-    <h3 class="subtitle reveal">Todas as <span class="hl">ferramentas e cursos</span></h3>
-    <p class="all-tools__lead reveal">Além do Método, você leva mais de 20 cursos e mais de 250 ferramentas práticas da plataforma da Solute RH.</p>
+    <h3 class="subtitle reveal">E a <span class="hl">plataforma completa</span> junto</h3>
+    <p class="all-tools__lead reveal">Mais de 20 cursos e formações e mais de 250 ferramentas práticas da Solute RH no mesmo acesso.</p>
     <ul class="all-tools reveal" aria-label="Ferramentas inclusas na plataforma">
       <li><img src="img/cursos/22-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"></li>
       <li><img src="img/cursos/1-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"></li>
@@ -325,101 +430,54 @@
 </section>
 
 <!-- =======================================================================
-     COMO GARANTIR A BLACK
+     PLATAFORMA COMPLETA + ACESSO VITALÍCIO
      ======================================================================= -->
-<section class="section" id="como-garantir" aria-labelledby="passos-title">
-  <div class="container">
-    <h2 id="passos-title" class="title reveal">Garanta seu acesso em <span class="hl">3 passos</span></h2>
-    <ol class="steps">
-      <li class="step reveal">
-        <span class="step__n">1</span>
-        <h3>Escolha “Já sou aluno” ou “Não sou aluno”</h3>
-        <p>Clique no botão que combina com você, em qualquer parte da página.</p>
-      </li>
-      <li class="step reveal">
-        <span class="step__n">2</span>
-        <h3>Preencha nome, e-mail e WhatsApp</h3>
-        <p>Seus dados seguem preenchidos para o pagamento.</p>
-        <p class="step__secure"><span>Pagamento seguro via</span><img src="img/hotmart-160.webp" srcset="img/hotmart-160.webp 160w, img/hotmart-320.webp 320w" sizes="104px" alt="Hotmart" width="160" height="51" loading="lazy" decoding="async"></p>
-      </li>
-      <li class="step reveal">
-        <span class="step__n">3</span>
-        <h3>Pague e comece a estudar</h3>
-        <p><span data-payment-methods>Cartão de crédito, Pix e PayPal</span>. O acesso é liberado assim que o pagamento é identificado.</p>
-      </li>
-    </ol>
-  </div>
-</section>
-
-<!-- =======================================================================
-     CONTAGEM REGRESSIVA (só aparece com data real em js/config.js)
-     ======================================================================= -->
-<section class="countdown-block" data-countdown-block hidden aria-labelledby="cd-title">
-  <div class="container">
-    <h2 id="cd-title" class="countdown-block__title">A Black <span class="hl">termina em</span></h2>
-    <div class="countdown-block__units" role="timer" aria-live="off">
-      <div><strong data-cd="d">00</strong><span>dias</span></div>
-      <div><strong data-cd="h">00</strong><span>horas</span></div>
-      <div><strong data-cd="m">00</strong><span>min</span></div>
-      <div><strong data-cd="s">00</strong><span>seg</span></div>
+<section class="section lifetime" id="vitalicio" aria-labelledby="vit-title">
+  <div class="container lifetime__inner">
+    <div class="lifetime__copy">
+      <p class="hero__tags reveal"><span class="tag-off" data-discount>Até 40% OFF</span></p>
+      <h2 id="vit-title" class="title reveal">Nunca mais compre <span class="hl">uma ferramenta de RH</span></h2>
+      <p class="lifetime__lead reveal">A <strong>plataforma completa da Solute RH</strong>, com tudo que já existe e <strong>tudo que ainda vai ser lançado</strong>.</p>
+      <ul class="stats stats--2 reveal">
+        <li><strong>Vitalício</strong><span>Sem mensalidade e sem prazo para terminar</span></li>
+        <li><strong>+20</strong><span>Cursos e formações inclusos na plataforma</span></li>
+        <li><strong>+250</strong><span>Ferramentas práticas prontas para usar</span></li>
+        <li><strong>R$ 0</strong><span>Pelos próximos treinamentos gravados e publicados</span></li>
+      </ul>
+      <div class="cta-pair reveal"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="aluno" data-cta="vitalicio-aluno">Já sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="nao-aluno" data-cta="vitalicio-nao-aluno">Não sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+    </div>
+    <div class="lifetime__media reveal">
+      <p class="covers-badge"><span class="covers-badge__top">+20 cursos e</span><strong>+250</strong><span>ferramentas práticas</span></p>
+    <div class="lifetime__covers" role="img" aria-label="Algumas das ferramentas inclusas na plataforma"><div class="lifetime__track" data-covers-track><img src="img/cursos/22-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/1-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/18-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/9-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/2-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/16-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/5-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/12-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/7-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/19-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/13-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/6-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/21-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/3-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/17-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/10-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/14-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/4-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/11-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/20-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/8-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"><img src="img/cursos/15-240.webp" alt="" width="240" height="360" loading="lazy" decoding="async"></div></div>
     </div>
   </div>
 </section>
 
 <!-- =======================================================================
-     OFERTA
+     DEPOIMENTOS (trechos dos depoimentos publicados no site oficial)
      ======================================================================= -->
-<section class="section offer-section" id="oferta" aria-labelledby="oferta-title">
+<section class="section section--alt" id="depoimentos" aria-labelledby="dep-title">
   <div class="container">
-    <div class="offer reveal">
-      <p class="offer__badge" data-offer-badge hidden>Black Friday</p>
-      <h2 id="oferta-title" class="offer__title">Método RH <span class="hl">Estratégico</span></h2>
-
-      <p class="offer__lifetime"><strong>Acesso vitalício</strong> à plataforma completa da Solute RH</p>
-      <ul class="offer__list">
-        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><strong>Método RH Estratégico</strong>: 5 módulos e +50h de aulas</span></li>
-        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><strong>+20 cursos</strong> e <strong>+250 ferramentas práticas</strong></span></li>
-        <li><svg aria-hidden="true"><use href="#i-check"/></svg>Mentoria mensal em grupo</li>
-        <li><svg aria-hidden="true"><use href="#i-check"/></svg>Certificado de extensão universitária reconhecido pelo MEC</li>
-        <li><svg aria-hidden="true"><use href="#i-check"/></svg>Todas as ferramentas e cursos da plataforma inclusos</li>
-        <li><svg aria-hidden="true"><use href="#i-check"/></svg>Treinamentos e ferramentas futuras inclusos, sem pagar a mais</li>
-      </ul>
-      <div class="price">
-        <span class="tag-off" data-discount>Até 40% OFF</span>
-        <div class="price-tiers">
-          <div class="price-tier" data-tier="aluno">
-            <span class="price-tier__who"><span data-tier-label>Alunos</span> pagam:</span>
-            <strong class="price-tier__value" data-tier-price><span class="price-tier__cur">R$</span> 1.198,20</strong>
-            <span class="price-tier__note">ou <b data-tier-inst>12x de R$ 127,60</b></span>
-          </div>
-          <div class="price-tier" data-tier="nao-aluno">
-            <span class="price-tier__who"><span data-tier-label>Novos alunos</span> pagam:</span>
-            <strong class="price-tier__value" data-tier-price><span class="price-tier__cur">R$</span> 1.298,05</strong>
-            <span class="price-tier__note">ou <b data-tier-inst>12x de R$ 138,23</b></span>
-          </div>
-        </div>
-      </div>
-
-      <div class="cta-pair cta-pair--block"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="aluno" data-cta="oferta-aluno">Já sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="nao-aluno" data-cta="oferta-nao-aluno">Não sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
-
-      <ul class="offer__trust">
-        <li><svg aria-hidden="true"><use href="#i-lock"/></svg>Pagamento seguro</li>
-        <li><svg aria-hidden="true"><use href="#i-shield"/></svg>Garantia de 7 dias</li>
-        <li><svg aria-hidden="true"><use href="#i-bolt"/></svg><span data-payment-methods>Cartão de crédito, Pix e PayPal</span></li>
-      </ul>
+    <div class="title-row">
+      <h2 id="dep-title" class="title reveal">Quem já passou <span class="hl">pelo Método</span></h2>
+      <p class="pill reveal">+24.000 alunos</p>
     </div>
-  </div>
-</section>
-
-<!-- =======================================================================
-     GARANTIA
-     ======================================================================= -->
-<section class="section section--alt" id="garantia" aria-labelledby="garantia-title">
-  <div class="container guarantee reveal">
-    <img class="guarantee__seal" src="img/garantia-07-dias-320.webp" alt="Selo de garantia de 7 dias" width="320" height="320" loading="lazy" decoding="async">
-    <div>
-      <h2 id="garantia-title" class="title title--sm">Garantia de <span class="hl">7 dias</span></h2>
-      <p>Entre, assista às aulas e use as ferramentas. Se em até 7 dias você sentir que a plataforma não é para você, é só pedir o reembolso e devolvemos 100% do valor investido. Sem perguntas e sem burocracia.</p>
+    <div class="quotes">
+      <figure class="quote reveal">
+        <p class="stars" aria-label="5 estrelas">★★★★★</p>
+        <blockquote><p>“O método da Solute não é historinha, é transformação real. Com as ferramentas certas e o direcionamento da Rose, <mark>implantei um RH do zero, mudei a cultura</mark> e me tornei uma profissional generalista preparada para ir além do DP e atuar estrategicamente no RH.”</p></blockquote>
+        <figcaption>Samantha · Aluna do Método</figcaption>
+      </figure>
+      <figure class="quote reveal">
+        <p class="stars" aria-label="5 estrelas">★★★★★</p>
+        <blockquote><p>“A base do meu conhecimento veio da Solute. O curso foi crucial para eu entender o que precisava melhorar e <mark>desenvolver o olhar estratégico de uma recrutadora, mesmo vindo de outra área</mark>. Ele impactou em tudo, transformando minha forma de atuar no RH.”</p></blockquote>
+        <figcaption>Samara · Aluna do Método</figcaption>
+      </figure>
+      <figure class="quote reveal">
+        <p class="stars" aria-label="5 estrelas">★★★★★</p>
+        <blockquote><p>“Ser um RH estratégico é entender que nosso papel vai além de cuidar de pessoas; é <mark>trazer resultados mensuráveis, alinhar indicadores</mark>, implementar melhorias e conectar as necessidades do negócio com as soluções de gestão.”</p></blockquote>
+        <figcaption>Thais · Aluna do Método</figcaption>
+      </figure>
     </div>
   </div>
 </section>
@@ -431,13 +489,158 @@
   <div class="container expert reveal">
     <img class="expert__photo" src="img/rose-480.webp" srcset="img/rose-480.webp 480w, img/rose-800.webp 800w" sizes="(min-width: 900px) 380px, 80vw" alt="Rosemeire Moreira" width="480" height="480" loading="lazy" decoding="async">
     <div>
-      <p class="kicker">Quem ensina</p>
+      <p class="eyebrow">Quem ensina</p>
       <h2 id="esp-title" class="title title--sm">Rosemeire <span class="hl">Moreira</span></h2>
-      <p>Mais de 15 anos em Recursos Humanos e criadora do ecossistema de ensino da Solute RH.</p>
-      <dl class="expert__stats">
-        <div><dt>anos em RH</dt><dd>+15</dd></div>
-        <div><dt>alunos impactados</dt><dd>+24.000</dd></div>
-      </dl>
+      <p>Criadora do ecossistema de ensino da Solute RH.</p>
+      <ul class="stats stats--2">
+        <li><strong>+16</strong><span>Anos de experiência em Recursos Humanos</span></li>
+        <li><strong>+24.000</strong><span>Alunos impactados pelos treinamentos</span></li>
+        <li><strong>+1.000</strong><span>Empresas atendidas pela Solute RH</span></li>
+        <li><strong>5 anos</strong><span>De Solute RH, fortalecendo negócios através de pessoas</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- =======================================================================
+     ÂNCORA DE VALOR (pitch: R$ 5.150 → R$ 1.997 → "hoje não é um dia qualquer")
+     ======================================================================= -->
+<section class="section section--alt anchor" id="valor" aria-labelledby="valor-title">
+  <div class="container anchor__inner">
+    <h2 id="valor-title" class="anchor__lead reveal">O que eu montei para essa Black, <span class="hl">eu nunca tinha topado fazer.</span></h2>
+    <div class="anchor__grid">
+      <div class="anchor__card reveal">
+        <p class="eyebrow eyebrow--muted">Somando tudo que está na plataforma</p>
+        <p class="anchor__ref"><span class="anchor__big anchor__big--ref">R$ 5.150</span></p>
+        <p class="anchor__text">Método RH Estratégico, +20 cursos e formações, +250 ferramentas, mentoria e certificado. Esse é o valor real do que entra no acesso.</p>
+        <p class="anchor__punch">Mas ninguém aqui vai pagar isso.</p>
+      </div>
+      <div class="anchor__card reveal">
+        <p class="eyebrow eyebrow--muted">O preço do acesso vitalício</p>
+        <p class="anchor__from"><s>R$ 5.150</s> <span class="chip">por</span></p>
+        <p class="anchor__big">R$ 1.997</p>
+        <p class="anchor__text">Quem já orçou o Método sabe: esse é o preço, todos os dias do ano.</p>
+        <p class="anchor__punch">Mas hoje não é um dia qualquer.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =======================================================================
+     CONTAGEM REGRESSIVA (só aparece com data real em js/config.js)
+     ======================================================================= -->
+<section class="countdown-block" data-countdown-block hidden aria-labelledby="cd-title">
+  <div class="container">
+    <h2 id="cd-title" class="countdown-block__title">São 17 horas de janela. <span class="hl">Termina em</span></h2>
+    <div class="countdown-block__units" role="timer" aria-live="off">
+      <div><strong data-cd="d">00</strong><span>dias</span></div>
+      <div><strong data-cd="h">00</strong><span>horas</span></div>
+      <div><strong data-cd="m">00</strong><span>min</span></div>
+      <div><strong data-cd="s">00</strong><span>seg</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- =======================================================================
+     OFERTA: uma condição por público (valores em js/config.js → offer.tiers)
+     ======================================================================= -->
+<section class="section offer-section" id="oferta" aria-labelledby="oferta-title">
+  <div class="container">
+    <p class="eyebrow eyebrow--center reveal">Black da Solute · Só hoje, das 7h às 23h59</p>
+    <h2 id="oferta-title" class="title title--center reveal">Escolha a <span class="hl">sua condição</span></h2>
+    <div class="offer offer--tiers">
+      <article class="tier tier--novo reveal" data-tier="nao-aluno">
+        <p class="tier__who">Para quem entra agora</p>
+        <p class="tier__from"><s data-price-list>R$ 1.997</s> <span class="tier__off" data-tier-off>35% OFF</span></p>
+        <p class="tier__inst" data-tier-inst>12x de R$ 138,23</p>
+        <p class="tier__cash">ou <strong data-tier-price><span class="price-tier__cur">R$</span> 1.298,05</strong> à vista</p>
+        <p class="tier__note">Seu acesso vitalício começa hoje.</p>
+        <a class="btn btn--cta btn--xl btn--block" href="#oferta" data-checkout="nao-aluno" data-cta="oferta-nao-aluno">Não sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      </article>
+      <article class="tier tier--aluno reveal" data-tier="aluno">
+        <p class="tier__flag">Melhor condição</p>
+        <p class="tier__who">E para quem já é aluno</p>
+        <p class="tier__from"><s data-price-list>R$ 1.997</s> <span class="tier__off" data-tier-off>40% OFF</span></p>
+        <p class="tier__inst" data-tier-inst>12x de R$ 127,60</p>
+        <p class="tier__cash">ou <strong data-tier-price><span class="price-tier__cur">R$</span> 1.198,20</strong> à vista</p>
+        <p class="tier__note">Aluno da Solute sempre tem a melhor condição.</p>
+        <a class="btn btn--cta btn--xl btn--block" href="#oferta" data-checkout="aluno" data-cta="oferta-aluno">Já sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      </article>
+    </div>
+    <ul class="offer__trust reveal">
+      <li><svg aria-hidden="true"><use href="#i-lock"/></svg>Pagamento seguro via Hotmart</li>
+      <li><svg aria-hidden="true"><use href="#i-shield"/></svg>Garantia de 7 dias</li>
+      <li><svg aria-hidden="true"><use href="#i-bolt"/></svg><span data-payment-methods>Cartão de crédito, Pix e PayPal</span></li>
+      <li><svg aria-hidden="true"><use href="#i-check"/></svg>Acesso vitalício à plataforma completa</li>
+    </ul>
+  </div>
+</section>
+
+<!-- =======================================================================
+     COMO FUNCIONA
+     ======================================================================= -->
+<section class="section section--alt" id="como-funciona" aria-labelledby="como-title">
+  <div class="container">
+    <h2 id="como-title" class="title title--tight reveal">Como <span class="hl">funciona</span></h2>
+    <p class="section-lead reveal">Hoje, quinta 05/11, o link caiu nos 16 grupos ao mesmo tempo.</p>
+    <ul class="cards cards--3">
+      <li class="card reveal"><svg class="card__icon" aria-hidden="true"><use href="#i-clock"/></svg><h3>Das 7h às 23h59</h3><p>Um dia só. Milhares de pessoas recebem o mesmo link, então resolve logo.</p></li>
+      <li class="card reveal"><svg class="card__icon" aria-hidden="true"><use href="#i-shield"/></svg><h3>Sua condição no seu botão</h3><p>Botão azul para quem já é aluno (40% OFF), laranja para quem entra agora (35% OFF). Preencha nome, e-mail e WhatsApp e siga para o pagamento.</p></li>
+      <li class="card reveal"><svg class="card__icon" aria-hidden="true"><use href="#i-lock"/></svg><h3>Só até hoje, 23h59</h3><p>Depois disso o carrinho fecha e essa condição sai do ar.</p></li>
+    </ul>
+  </div>
+</section>
+
+<!-- =======================================================================
+     OBJEÇÕES (pitch: "O que apareceu nos grupos essa semana")
+     ======================================================================= -->
+<section class="section" id="objecoes" aria-labelledby="obj-title">
+  <div class="container">
+    <h2 id="obj-title" class="title reveal">O que apareceu nos grupos <span class="hl">essa semana</span></h2>
+    <ul class="cards cards--2">
+      <li class="card reveal"><h3>“Não vou ter tempo de assistir tudo”</h3><p>O acesso é vitalício e tem aplicativo. Você estuda no seu ritmo, sem prazo para terminar.</p></li>
+      <li class="card reveal"><h3>“Já fiz curso e nada mudou na prática”</h3><p>Aqui é método aplicado em mais de 1.000 empresas, com +250 ferramentas prontas e mentoria mensal.</p></li>
+      <li class="card reveal"><h3>“Agora não cabe no bolso”</h3><p>Em 12x, dá cerca de R$ 4 por dia. Por um acesso que é seu para sempre.</p></li>
+      <li class="card reveal"><h3>“E se eu não gostar?”</h3><p>Você tem 7 dias de garantia. Entra, testa tudo e, se não for para você, devolvemos 100% do valor.</p></li>
+    </ul>
+  </div>
+</section>
+
+<!-- =======================================================================
+     GARANTIA
+     ======================================================================= -->
+<section class="section section--alt" id="garantia" aria-labelledby="garantia-title">
+  <div class="container guarantee reveal">
+    <img class="guarantee__seal" src="img/garantia-07-dias-320.webp" alt="Selo de garantia de 7 dias" width="320" height="320" loading="lazy" decoding="async">
+    <div>
+      <p class="eyebrow">Risco zero</p>
+      <h2 id="garantia-title" class="title title--sm">Garantia de <span class="hl">7 dias</span></h2>
+      <p>Entra, assiste às aulas e usa as ferramentas. Se em até 7 dias você sentir que a plataforma não é para você, devolvemos 100% do valor. Sem perguntas e sem burocracia.</p>
+    </div>
+  </div>
+</section>
+
+<!-- =======================================================================
+     RECAPITULANDO
+     ======================================================================= -->
+<section class="section recap" id="recap" aria-labelledby="recap-title">
+  <div class="container">
+    <h2 id="recap-title" class="title reveal">Recapitulando: <span class="hl">o que você leva</span></h2>
+    <div class="recap__grid">
+      <ul class="offer__list recap__list reveal">
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><strong>Método RH Estratégico</strong> completo, +50h de aulas</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg><span><strong>+20 cursos e formações</strong>, +250 ferramentas práticas</span></li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg>Mentoria mensal em grupo</li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg>Certificado de extensão reconhecido pelo MEC e +20 certificados dos cursos livres</li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg>Treinamentos futuros inclusos, sem pagar a mais</li>
+        <li><svg aria-hidden="true"><use href="#i-check"/></svg>Acesso vitalício e garantia de 7 dias</li>
+      </ul>
+      <div class="recap__card reveal">
+        <p class="recap__from">Valor do conteúdo: <s>R$ 5.150</s></p>
+        <p class="recap__big">Hoje, a partir de <span class="recap__price">12x de R$ 127,60</span></p>
+        <p class="recap__small">Aluno: 40% OFF · Novo aluno: 35% OFF · Pague uma vez, use para sempre</p>
+        <div class="cta-pair"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="aluno" data-cta="recap-aluno">Já sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="nao-aluno" data-cta="recap-nao-aluno">Não sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+      </div>
     </div>
   </div>
 </section>
@@ -499,10 +702,11 @@
 <section class="final" aria-labelledby="final-title">
   <div class="container final__inner reveal">
     <img class="final__seal" src="img/selo-bf-560.webp?v=1" srcset="img/selo-bf-320.webp?v=1 320w, img/selo-bf-560.webp?v=1 560w" sizes="(min-width: 760px) 300px, 220px" alt="Black Friday" width="560" height="306" loading="lazy" decoding="async">
-    <h2 id="final-title" class="final__title">Acesso vitalício <span class="hl">para sempre</span></h2>
-    <p class="final__sub">Black Friday. A plataforma completa de RH, para sempre. Nunca mais compre outra ferramenta ou curso de RH.</p>
-    <p class="final__price"><span class="tag-off" data-discount>Até 40% OFF</span></p>
+    <p class="eyebrow eyebrow--center">Black da Solute · Hoje, 05/11</p>
+    <h2 id="final-title" class="final__title">Só até <span class="hl">23h59 de hoje</span></h2>
+    <p class="final__price">Aluno: 40% OFF · Novo aluno: 35% OFF · Das 7h às 23h59</p>
     <div class="cta-pair"><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="aluno" data-cta="final-aluno">Já sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="btn btn--cta btn--xl" href="#oferta" data-checkout="nao-aluno" data-cta="final-nao-aluno">Não sou aluno <svg aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+    <p class="final__sub final__sub--after">Milhares de pessoas receberam o mesmo link. Garanta a sua condição o quanto antes.</p>
   </div>
 </section>
 
@@ -519,7 +723,7 @@
   </div>
 </footer>
 
-<!-- CTA fixo: aparece a partir dos módulos -->
+<!-- CTA fixo: aparece a partir do Método (módulos) -->
 <div class="sticky-cta" data-sticky-cta aria-hidden="true">
   <div class="cta-pair cta-pair--sticky"><a class="btn btn--cta" href="#oferta" data-checkout="aluno" data-cta="sticky-aluno" tabindex="-1">Sou aluno</a><a class="btn btn--cta" href="#oferta" data-checkout="nao-aluno" data-cta="sticky-nao-aluno" tabindex="-1">Não sou aluno</a></div>
 </div>

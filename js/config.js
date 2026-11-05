@@ -19,13 +19,25 @@ window.RH_CONFIG = {
     // [PENDENTE] Data REAL de encerramento, no horário de Brasília (-03:00).
     // Enquanto for null, a faixa com o contador regressivo NÃO aparece.
     // Exemplo: '2026-11-30T23:59:59-03:00'
-    endsAt: null,
+    endsAt: '2026-11-05T23:59:59-03:00', // [CONFIRMADO] pitch: só 05/11, das 7h às 23h59
 
 
     // Etiqueta de urgência ao lado de "BLACK FRIDAY" (hero e bloco do vitalício).
     // Use somente se for verdade no dia em que a página estiver no ar.
     // null esconde a etiqueta.
     urgencyTag: 'Só hoje',
+  },
+
+  /* ----------------------------------------------------------------------
+     VÍDEO DO HERO (YouTube)
+     ----------------------------------------------------------------------
+     Cole o link do vídeo (youtube.com/watch?v=..., youtu.be/..., /shorts/...)
+     ou só o ID. O vídeo começa sozinho, sem som (regra dos navegadores para
+     autoplay), em loop, com o botão "Clique para ativar o som" por cima.
+     Vazio ('') = hero sem vídeo, no layout anterior.
+     ---------------------------------------------------------------------- */
+  hero: {
+    youtube: 'https://youtube.com/live/vECYXOPRzVw', // [CONFIRMADO]
   },
 
   /* ----------------------------------------------------------------------
