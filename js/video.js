@@ -89,6 +89,7 @@
   });
   var ready = false;
   var autoTried = 0;
+  var lastTime = 0, duration = 0, lastEndFix = 0;
   window.addEventListener('message', function (e) {
     if (e.source !== iframe.contentWindow) return;
     var data;
@@ -112,9 +113,20 @@
     }
     // som ligado (pelo botão, pela abertura ou pelos controles do YouTube): botão some
     if (info.muted === false) hideButton();
-    // fim do vídeo (estado 0): volta ao início sem recarregar o player
+    // guarda onde o vídeo está (o player manda isso várias vezes por segundo)
+    if (typeof info.currentTime === 'number' && info.currentTime > 0) lastTime = info.currentTime;
+    if (typeof info.duration === 'number' && info.duration > 0) duration = info.duration;
+
+    // "Terminou" (estado 0). Em gravação de live o player às vezes manda esse
+    // aviso no meio do vídeo, quando engasga. Só volta ao início se estiver
+    // mesmo no fim; senão continua de onde parou.
     var state = data.event === 'onStateChange' ? data.info : info.playerState;
-    if (state === 0) { send('seekTo', [0, true]); send('playVideo'); }
+    if (state === 0 && Date.now() - lastEndFix > 3000) {
+      lastEndFix = Date.now();
+      var noFim = duration > 0 && lastTime >= duration - 3;
+      send('seekTo', [noFim ? 0 : lastTime, true]);
+      send('playVideo');
+    }
   });
 
   if (btn) btn.addEventListener('click', function () {

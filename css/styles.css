@@ -1766,3 +1766,33 @@ html.bf-intro-on:not(.bf-intro-saindo) .wall__track { animation-play-state: paus
 /* Vídeo: a capa fica visível até o player começar a tocar (sem tela preta) */
 .hero__frame iframe { opacity: 0; transition: opacity .5s ease; }
 .hero__video.is-playing .hero__frame iframe { opacity: 1; }
+
+/* DESEMPENHO 2: animações que só mexem em transform/opacity (a GPU faz sozinha,
+   sem redesenhar a tela a cada quadro). Visual praticamente igual. */
+/* Selos: brilho fixo em vez de brilho pulsando (filter animado redesenha a imagem) */
+.hero__seal img, .final__seal, .seal-divider img {
+  filter: drop-shadow(0 20px 30px rgba(0, 0, 0, .85)) drop-shadow(0 0 30px rgba(247, 147, 30, .45));
+}
+.hero__seal img, .final__seal { animation: seal-sway 6s ease-in-out infinite; }
+@media (max-width: 959px) { .hero__seal img { animation: seal-tilt 6s ease-in-out infinite; } }
+.seal-divider img { animation: none; }
+/* Botão de som do vídeo: pulsa com escala, não com sombra */
+.hero__unmute-pill { animation: unmute-breathe 1.8s ease-in-out infinite; box-shadow: 0 10px 30px rgba(0, 0, 0, .55), 0 0 26px rgba(247, 147, 30, .45); }
+.hero__video.is-hint .hero__unmute-pill { animation: unmute-breathe 1.8s ease-in-out infinite, hint-press 2.6s ease .3s 3; }
+@keyframes unmute-breathe { 0%, 100% { scale: 1; } 50% { scale: 1.05; } }
+/* Celular: CTAs com brilho fixo + respiração (escala) e o reflexo passando;
+   sem degradê deslizando nem anel de sombra animado */
+@media (max-width: 959px) {
+  .btn--cta {
+    animation: cta-breathe 1.8s ease-in-out infinite;
+    box-shadow: 0 0 24px rgba(50, 70, 255, .55), 0 .18em 0 #0f16a8;
+  }
+  .btn--cta[data-checkout="nao-aluno"] {
+    animation: cta-breathe 1.8s ease-in-out infinite;
+    box-shadow: 0 0 24px rgba(247, 147, 30, .55), 0 .18em 0 #9a4f00;
+  }
+  .sticky-cta .cta-pair--sticky .btn, .lead-form .btn--cta { animation: none; }
+  .recap__card .btn--cta[data-checkout="nao-aluno"] { animation: none; box-shadow: none; }
+}
+@keyframes cta-breathe { 0%, 100% { scale: 1; } 50% { scale: 1.03; } }
+@media (prefers-reduced-motion: reduce) { .hero__unmute-pill, .btn--cta { animation: none !important; } }
