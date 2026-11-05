@@ -158,3 +158,14 @@
   }, { threshold: .5 });
   io.observe(grid);
 })();
+
+/* Desempenho: animações contínuas só rodam quando estão na tela
+   (mural 3D, selos, faixas e esteira de capas). Fora da tela ficam pausadas. */
+(function () {
+  'use strict';
+  if (!('IntersectionObserver' in window)) return;
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { e.target.classList.toggle('is-offscreen', !e.isIntersecting); });
+  }, { rootMargin: '100px 0px' });
+  Array.prototype.forEach.call(document.querySelectorAll('.hero, .tapes, .lifetime, .seal-divider, .final, .site-footer'), function (el) { io.observe(el); });
+})();

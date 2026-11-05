@@ -61,6 +61,8 @@
   function start() {
     if (iframe.parentNode) return;
     frame.appendChild(iframe);
+    // se o vídeo não começar sozinho (ex.: modo economia do iPhone), mostra o player mesmo assim
+    setTimeout(function () { box.classList.add('is-playing'); }, 8000);
     // cursor animado indicando o clique para ativar o som
     setTimeout(function () { if (btn && !btn.hidden) box.classList.add('is-hint'); }, 900);
   }
@@ -86,6 +88,7 @@
     iframe.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 'hero-video' }), '*');
   });
   var ready = false;
+  var autoTried = 0;
   window.addEventListener('message', function (e) {
     if (e.source !== iframe.contentWindow) return;
     var data;
@@ -95,10 +98,18 @@
     // player pronto: se a pessoa já interagiu com a página, liga o som
     if (!ready && (data.event === 'onReady' || data.event === 'initialDelivery' || data.event === 'infoDelivery')) {
       ready = true;
-      if (canSound()) unmute(false);
+      if (canSound()) { unmute(false); autoTried = Date.now(); }
     }
 
     var info = data.info && typeof data.info === 'object' ? data.info : {};
+    // começou a tocar: troca a capa pelo player
+    if (info.playerState === 1) box.classList.add('is-playing');
+    // som automático barrado (o navegador pausa o vídeo): volta para mudo e segue tocando
+    if (autoTried && Date.now() - autoTried < 4000 && info.playerState === 2) {
+      autoTried = 0;
+      send('mute');
+      send('playVideo');
+    }
     // som ligado (pelo botão, pela abertura ou pelos controles do YouTube): botão some
     if (info.muted === false) hideButton();
     // fim do vídeo (estado 0): volta ao início sem recarregar o player
@@ -107,6 +118,7 @@
   });
 
   if (btn) btn.addEventListener('click', function () {
+    autoTried = 0;
     unmute(true);
     hideButton();
     (window.dataLayer = window.dataLayer || []).push({ event: 'hero_video_unmute' });

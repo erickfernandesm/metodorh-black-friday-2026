@@ -29,7 +29,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-  <link rel="stylesheet" href="css/styles.css?v=20261106d">
+  <link rel="stylesheet" href="css/styles.css?v=20261106e">
 
   <script>document.documentElement.classList.add('js');</script>
 
@@ -59,7 +59,7 @@ window.bfConfete = function (host, monta) {
   monta(W, H, function (x, y, vx, vy, k) {
     ps.push({ x: x, y: y, vx: vx, vy: vy, s: 6 + Math.random() * 7, r: Math.random() * 6.3,
       vr: (Math.random() - .5) * .3, f: Math.random() * 6.3, c: cores[k % cores.length], q: Math.random() < .3 });
-  }, W < 600 ? 120 : 200);
+  }, W < 600 ? 70 : 160);
   var t0 = performance.now();
   (function quadro(t) {
     ctx.clearRect(0, 0, W, H);
@@ -77,7 +77,7 @@ window.bfConfete = function (host, monta) {
       else ctx.fillRect(-p.s / 2, -p.s * .3, p.s, p.s * .6);
       ctx.restore();
     }
-    if (vivos && t - t0 < 9000) requestAnimationFrame(quadro);
+    if (vivos && t - t0 < (W < 600 ? 6000 : 9000)) requestAnimationFrame(quadro);
     else { removeEventListener('resize', mede); if (c.parentNode) c.parentNode.removeChild(c); }
   })(t0);
 };
@@ -143,12 +143,12 @@ window.bfConfete = function (host, monta) {
   }
   </script>
 
-  <script defer src="js/config.js?v=20261106d"></script>
-  <script defer src="js/tracking.js?v=20261106d"></script>
-  <script defer src="js/offer.js?v=20261106d"></script>
-  <script defer src="js/checkout.js?v=20261106d"></script>
-  <script defer src="js/ui.js?v=20261106d"></script>
-  <script defer src="js/video.js?v=20261106d"></script>
+  <script defer src="js/config.js?v=20261106e"></script>
+  <script defer src="js/tracking.js?v=20261106e"></script>
+  <script defer src="js/offer.js?v=20261106e"></script>
+  <script defer src="js/checkout.js?v=20261106e"></script>
+  <script defer src="js/ui.js?v=20261106e"></script>
+  <script defer src="js/video.js?v=20261106e"></script>
 </head>
 <body>
 
