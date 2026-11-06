@@ -1347,3 +1347,34 @@ body.has-sticky-cta .site-footer { padding-bottom: calc(110px + env(safe-area-in
 .price-tier__cur { font-weight: 500; }
 .price-tier__who { font-weight: 600; }
 .price-tier__note b { font-weight: 600; }
+
+/* Black do mês: preço único e botão único (30% OFF) ======================== */
+.price-single { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 16px auto 4px; padding: 18px 16px; max-width: 420px; border-radius: 14px; background: rgba(255, 255, 255, .04); border: 1.5px solid rgba(247, 147, 30, .8); }
+.price-single p { margin: 0; }
+.price-single__who { font-weight: 600; font-size: 1.02rem; color: var(--text); }
+.price-single__from { color: var(--muted); }
+.price-single__from s { text-decoration-color: #ff5a5a; text-decoration-thickness: 2px; }
+.price-single__value { font-family: var(--font-body); font-weight: 600; white-space: nowrap; font-size: clamp(2.1rem, 1.6rem + 1.6vw, 2.6rem); line-height: 1.15; font-variant-numeric: tabular-nums; color: var(--text); }
+.price-single__note { color: var(--muted); font-size: 1rem; }
+.btn--cta[data-checkout="black30"] {
+  color: var(--ink);
+  border-color: rgba(255, 214, 160, .85);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, .35);
+  background: linear-gradient(100deg, #e57a00 0%, #f7931e 30%, #ffb347 50%, #f7931e 70%, #e57a00 100%);
+  background-size: 220% 100%;
+  animation: cta-color 5s ease-in-out infinite, cta-pulse-bf 1.8s ease-out infinite;
+}
+.sticky-cta .cta-pair--sticky .btn[data-checkout="black30"] { box-shadow: 0 .18em 0 #9a4f00; animation: cta-color 5s ease-in-out infinite; }
+.cta-pair--solo { justify-content: center; }
+.cta-pair--solo .btn { flex: 0 1 auto; white-space: nowrap; }
+.cta-pair--solo.cta-pair--block .btn { flex: 1 1 100%; }
+@media (max-width: 959px) {
+  .cta-pair--solo .btn { flex-basis: 100%; font-size: min(1.35rem, calc((100vw - 40px) / 16)); padding-inline: 16px; }
+  .offer .cta-pair--solo .btn { font-size: min(1.3rem, calc((100vw - 80px) / 16)); }
+}
+@media (prefers-reduced-motion: reduce) { .btn--cta[data-checkout="black30"] { animation: none !important; } }
+/* Botão único no celular: texto com folga dentro do botão */
+@media (max-width: 959px) {
+  .cta-pair--solo .btn { font-size: min(1.3rem, calc((100vw - 40px) / 18)); }
+  .offer .cta-pair--solo .btn { font-size: min(1.25rem, calc((100vw - 96px) / 17)); padding-inline: 12px; }
+}

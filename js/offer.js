@@ -201,8 +201,15 @@
     }).join(' · '));
   }
 
+  /* Preço único (30% OFF para todos) ----------------------------------- */
+  function renderSingle() {
+    if (offer.tiers || !hasCash) return;
+    setText('[data-price-single]', brl.format(offer.cashPrice).replace(/^R\$\s*/, ''));
+  }
+
   function init() {
     renderPrice();
+    renderSingle();
     renderTiers();
     renderCountdown();
     renderUrgencyTag();

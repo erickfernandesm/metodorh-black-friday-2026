@@ -25,7 +25,7 @@ window.RH_CONFIG = {
     // Etiqueta de urgência ao lado de "BLACK FRIDAY" (hero e bloco do vitalício).
     // Use somente se for verdade no dia em que a página estiver no ar.
     // null esconde a etiqueta.
-    urgencyTag: 'Só hoje',
+    urgencyTag: null,
   },
 
   /* ----------------------------------------------------------------------
@@ -39,22 +39,19 @@ window.RH_CONFIG = {
      "condição de Black Friday" nem exibe economia.
      ---------------------------------------------------------------------- */
   offer: {
-    isBlackFridayPrice: true,      // Black Friday: 30% OFF, preço "De" e economia
+    isBlackFridayPrice: true,      // Black Friday: 30% OFF e preço "De"
 
-    // [CONFIRMADO] Black Friday com um preço por público (sobre R$ 1.997):
-    //   alunos      40% OFF  R$ 1.198,20  (cupom BLACKALUNO40)
-    //   não alunos  35% OFF  R$ 1.298,05  (cupom BLACK35)
+    // [CONFIRMADO] Black Friday do mês (a partir de 06/11): 30% OFF para todos,
+    // alunos e novos alunos, igual à página do vídeo. Cupom BLACK30.
     priceConfirmed: true,
     listPrice: 1997,               // preço "De" (preço cheio)
-    cashPrice: 1198.20,            // menor preço (referência); os preços de cada público ficam em tiers
-    // [CONFIRMADO] Dobra de preço da oferta: "Alunos pagam" / "Novos alunos pagam".
-    tiers: {
-      'aluno':     { label: 'Alunos',       cashPrice: 1198.20, installments: 12, installmentValue: 127.60 },
-      'nao-aluno': { label: 'Novos alunos', cashPrice: 1298.05, installments: 12, installmentValue: 138.23 },
-    },
+    cashPrice: 1397.90,            // 30% OFF sobre R$ 1.997
+    tiers: null,                   // um preço só, para todos
     // Com promoção ativa, o "% OFF" é calculado a partir de listPrice e cashPrice.
 
-    installments: null,            // parcelas variam por público: ver tierNote
+    // [PENDENTE] valor da parcela em 12x na Hotmart. Enquanto for null, a
+    // página mostra "R$ 1.397,90 à vista ou em até 12x no cartão".
+    installments: null,
     installmentValue: null,
     installmentNote: '',           // ex.: 'sem juros' (preencha só se for verdade)
 
@@ -75,15 +72,11 @@ window.RH_CONFIG = {
      CHECKOUT
      ---------------------------------------------------------------------- */
   checkout: {
-    // Checkout padrão (usado se o botão não indicar aluno / não aluno).
-    url: 'https://pay.hotmart.com/N103364259K',
+    // [CONFIRMADO] checkout da Black do mês (cupom BLACK30), o mesmo da página do vídeo.
+    url: 'https://pay.hotmart.com/N103364259K?bid=1793911664774&off=vounmytr&offDiscount=BLACK30',
 
-    // Um checkout por botão: "Já sou aluno" e "Não sou aluno".
-    // [CONFIRMADO] alunos: cupom BLACKALUNO40 (40%) · não alunos: BLACK35 (35%).
-    urls: {
-      'aluno': 'https://pay.hotmart.com/?off=2j6xzmn0&offDiscount=BLACKALUNO40',
-      'nao-aluno': 'https://pay.hotmart.com/?off=2j6xzmn0&offDiscount=BLACK35',
-    },
+    // Checkout por botão (vazio = todos os botões usam o url acima).
+    urls: {},
 
     // Parâmetros da URL da página que são repassados ao checkout
     // (UTMs + parâmetros de rastreio aceitos pela Hotmart).
@@ -103,12 +96,9 @@ window.RH_CONFIG = {
       webhookUrl: 'https://webhook.sellflux.app/v2/webhook/custom/f39c600d3d8414b3a7bd057498e97ede',
       // Um webhook por público. Vazio = usa o webhookUrl acima.
       // O lead também vai com o campo aluno: 'sim' / 'nao'.
-      webhookUrls: {
-        // [CONFIRMADO] alunos
-        'aluno': 'https://webhook.sellflux.app/v2/webhook/custom/f39c600d3d8414b3a7bd057498e97ede',
-        // [CONFIRMADO] não alunos
-        'nao-aluno': 'https://webhook.sellflux.app/v2/webhook/custom/a65b8575d8b7f0aa22fd74c951b5c3a4',
-      },
+      // Público único: todos os leads vão para o webhookUrl acima (igual à página do vídeo).
+      // Webhook dos não alunos (Black de 05/11): a65b8575d8b7f0aa22fd74c951b5c3a4
+      webhookUrls: {},
       // Parâmetros de pré-preenchimento do checkout da Hotmart:
       // nome, e-mail, DDD (phoneac) e número do telefone (phonenumber).
       prefillParams: { name: 'name', email: 'email', phoneAreaCode: 'phoneac', phoneNumber: 'phonenumber' },
