@@ -58,9 +58,7 @@
   // Microsoft Clarity
   if (cfg.clarityId) {
     window.clarity = window.clarity || function () { (window.clarity.q = window.clarity.q || []).push(arguments); };
-    // carrega depois da página e do vídeo, para não disputar o celular com o player
-    var loadClarity = function () { setTimeout(function () { addScript('https://www.clarity.ms/tag/' + encodeURIComponent(cfg.clarityId)); }, 4000); };
-    if (document.readyState === 'complete') loadClarity(); else window.addEventListener('load', loadClarity);
+    addScript('https://www.clarity.ms/tag/' + encodeURIComponent(cfg.clarityId));
   }
 
   // UTMify (mesma configuração do site atual)

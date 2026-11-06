@@ -19,25 +19,13 @@ window.RH_CONFIG = {
     // [PENDENTE] Data REAL de encerramento, no horário de Brasília (-03:00).
     // Enquanto for null, a faixa com o contador regressivo NÃO aparece.
     // Exemplo: '2026-11-30T23:59:59-03:00'
-    endsAt: '2026-11-05T23:59:59-03:00', // [CONFIRMADO] pitch: só 05/11, das 7h às 23h59
+    endsAt: null,
 
 
     // Etiqueta de urgência ao lado de "BLACK FRIDAY" (hero e bloco do vitalício).
     // Use somente se for verdade no dia em que a página estiver no ar.
     // null esconde a etiqueta.
     urgencyTag: 'Só hoje',
-  },
-
-  /* ----------------------------------------------------------------------
-     VÍDEO DO HERO (YouTube)
-     ----------------------------------------------------------------------
-     Cole o link do vídeo (youtube.com/watch?v=..., youtu.be/..., /shorts/...)
-     ou só o ID. O vídeo começa sozinho, sem som (regra dos navegadores para
-     autoplay), em loop, com o botão "Clique para ativar o som" por cima.
-     Vazio ('') = hero sem vídeo, no layout anterior.
-     ---------------------------------------------------------------------- */
-  hero: {
-    youtube: 'https://youtube.com/live/vECYXOPRzVw', // [CONFIRMADO]
   },
 
   /* ----------------------------------------------------------------------
@@ -150,27 +138,3 @@ window.RH_CONFIG = {
     utmify: true,
   },
 };
-
-/* --------------------------------------------------------------------------
-   FASE "MÊS" (a partir de 06/11/2026 00h00, horário de Brasília)
-   A data da virada fica no <head> do index.html (INICIO_MES).
-   Público único, 30% OFF o mês inteiro, sem contador e sem "só hoje".
-   -------------------------------------------------------------------------- */
-if (window.RH_FASE && window.RH_FASE.mes) {
-  (function (c) {
-    c.campaign.endsAt = null;          // sem contador
-    c.campaign.urgencyTag = null;      // sem "Só hoje"
-    c.offer.tiers = null;              // um preço só, para todos
-    c.offer.listPrice = 1997;
-    c.offer.cashPrice = 1397.90;       // 30% OFF sobre R$ 1.997
-    // [PENDENTE] valor da parcela em 12x na Hotmart. Enquanto for null, a
-    // página mostra "R$ 1.397,90 à vista" e "em até 12x no cartão".
-    c.offer.installments = null;
-    c.offer.installmentValue = null;
-    // [CONFIRMADO] checkout da Black do mês (cupom BLACK30)
-    c.checkout.url = 'https://pay.hotmart.com/N103364259K?bid=1793911664774&off=vounmytr&offDiscount=BLACK30';
-    c.checkout.urls = {};
-    // lead do formulário: webhook padrão (checkout.leadCapture.webhookUrl)
-    c.checkout.leadCapture.webhookUrls = {};
-  })(window.RH_CONFIG);
-}
