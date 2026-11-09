@@ -73,7 +73,7 @@ window.RH_CONFIG = {
      ---------------------------------------------------------------------- */
   checkout: {
     // [CONFIRMADO] checkout da Black do mês (cupom BLACK30), o mesmo da página do vídeo.
-    url: 'https://pay.hotmart.com/N103364259K?bid=1793911664774&off=vounmytr&offDiscount=BLACK30',
+    url: 'https://pay.hotmart.com/N103364259K?offDiscount=BLACK30&bid=1794225083425',
 
     // Checkout por botão (vazio = todos os botões usam o url acima).
     urls: {},
